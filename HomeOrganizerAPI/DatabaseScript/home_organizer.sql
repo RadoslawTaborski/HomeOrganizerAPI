@@ -204,12 +204,6 @@ FROM expenses;
 -- -----------------------------------------------------
 -- Insert datas
 -- -----------------------------------------------------
-INSERT INTO `user` (`id`, `username`, `email`, `password`, `create_time`, `update_time`, `delete_time`) VALUES
-(1, 'Radek', NULL, '', CURRENT_TIMESTAMP, null, null),
-(2, 'Klaudia', NULL, '', CURRENT_TIMESTAMP, null, null);
-
-INSERT INTO `expenses_settings` (`user1_id`, `user2_id`, `value`, `create_time`, `update_time`, `delete_time`) VALUES
-(1, 2, 0.6, CURRENT_TIMESTAMP, null, null);
 
 INSERT INTO `category` (`id`, `name`, `create_time`, `update_time`, `delete_time`) VALUES
 (1, 'spożywcze', CURRENT_TIMESTAMP, null, null),
@@ -243,9 +237,6 @@ INSERT INTO `state` (`id`, `name`, `create_time`, `update_time`, `delete_time`) 
 (2, 'LITTLE', CURRENT_TIMESTAMP, null, null),
 (3, 'MEDIUM', CURRENT_TIMESTAMP, null, null),
 (4, 'LOT', CURRENT_TIMESTAMP, null, null);
-
-INSERT INTO `item` (`id`, `name`, `shopping_list_id`, `state_id`, `quantity`, `category_id`, `bought`, `create_time`, `update_time`, `delete_time`) VALUES
-(1, 'papier toaletowy', NULL, 4, NULL, 12, NULL, CURRENT_TIMESTAMP, null, null);
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;

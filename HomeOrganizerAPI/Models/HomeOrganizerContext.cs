@@ -27,15 +27,6 @@ namespace HomeOrganizerAPI.Models
         public virtual DbSet<TemporaryItem> TemporaryItem { get; set; }
         public virtual DbSet<User> User { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseMySQL("Server=localhost;Port=3306;Database=home_organizer;Uid=root;Pwd=;");
-            }
-        }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Category>(entity =>
