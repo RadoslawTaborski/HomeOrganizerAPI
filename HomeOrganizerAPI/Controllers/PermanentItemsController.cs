@@ -21,9 +21,17 @@ namespace HomeOrganizerAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PermanentItem>>> Get()
+        public async Task<ActionResult<IEnumerable<ResponseData>>> Get()
         {
-            return Ok(await _context.PermanentItem.ToListAsync());
+            var data = await _context.PermanentItem.ToArrayAsync();
+            var response = new ResponseData
+            {
+                data = data,
+                total = data.Length,
+                message = "ok",
+                error = ""
+            };
+            return Ok(response);
         }
 
         [HttpGet("{id}")]

@@ -21,9 +21,17 @@ namespace HomeOrganizerAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Saldo>>> Get()
+        public async Task<ActionResult<ResponseData>> Get()
         {
-            return Ok(await _context.Saldo.ToListAsync());
+            var data = await _context.Saldo.ToArrayAsync();
+            var response = new ResponseData
+            {
+                data = data,
+                total = data.Length,
+                message = "ok",
+                error = ""
+            };
+            return Ok(response);
         }
     }
 }

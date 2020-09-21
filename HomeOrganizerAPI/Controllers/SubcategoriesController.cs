@@ -21,9 +21,17 @@ namespace HomeOrganizerAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Dto>>> Get()
+        public async Task<ActionResult<ResponseData>> Get()
         {
-            return Ok(await _context.Subcategory.Select(i => Dto.FromObject(i)).ToListAsync());
+            var data = await _context.Subcategory.Select(i => Dto.FromObject(i)).ToArrayAsync();
+            var response = new ResponseData
+            {
+                data = data,
+                total = data.Length,
+                message = "ok",
+                error = ""
+            };
+            return Ok(response);
         }
 
         [HttpGet("{id}")]
