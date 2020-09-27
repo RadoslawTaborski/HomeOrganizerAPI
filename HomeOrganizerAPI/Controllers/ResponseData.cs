@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace HomeOrganizerAPI.Controllers
 {
-    public class ResponseData
+    public class ResponseData<T>
     {
-        public object[] data { get; set; }
+        public T[] data { get; set; }
         public int total { get; set; }
         public string message { get; set; }
         public string error { get; set; }

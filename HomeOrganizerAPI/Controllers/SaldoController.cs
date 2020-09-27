@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using HomeOrganizerAPI.Models;
+using HomeOrganizerAPI.Repositories;
+using HomeOrganizerAPI.ResourceParameters;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,27 +13,20 @@ namespace HomeOrganizerAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class SaldoController : Controller
+    public class SaldoController : BaseController<Saldo, Saldo, Saldo>
     {
-        private readonly HomeOrganizerContext _context;
-
-        public SaldoController(HomeOrganizerContext context)
+        public SaldoController(HomeOrganizerContext context) : base(new SaldoRepository(context))
         {
-            _context = context;
         }
 
+        protected override Saldo FromObject(Saldo obj) => obj;
+
+        protected override Saldo ToObject(Saldo obj) => obj;
+
         [HttpGet]
-        public async Task<ActionResult<ResponseData>> Get()
+        public async Task<ActionResult<ResponseData<Saldo>>> Get([FromQuery] DefaultParameters resourceParameters)
         {
-            var data = await _context.Saldo.ToArrayAsync();
-            var response = new ResponseData
-            {
-                data = data,
-                total = data.Length,
-                message = "ok",
-                error = ""
-            };
-            return Ok(response);
+            return await BaseGet(resourceParameters);
         }
     }
 }

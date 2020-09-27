@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace HomeOrganizerAPI.Models
 {
-    public partial class User
+    public partial class User : Model
     {
         public User()
         {
@@ -17,9 +17,6 @@ namespace HomeOrganizerAPI.Models
         public string Username { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
-        public DateTimeOffset CreateTime { get; set; }
-        public DateTimeOffset? UpdateTime { get; set; }
-        public DateTimeOffset? DeleteTime { get; set; }
 
         public virtual ICollection<Expenses> ExpensesPayer { get; set; }
         public virtual ICollection<Expenses> ExpensesRecipient { get; set; }

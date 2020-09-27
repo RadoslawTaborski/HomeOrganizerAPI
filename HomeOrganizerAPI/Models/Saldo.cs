@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace HomeOrganizerAPI.Models
 {
-    public partial class Saldo
+    public partial class Saldo : Model
     {
         public int PayerId { get; set; }
         public int RecipientId { get; set; }
