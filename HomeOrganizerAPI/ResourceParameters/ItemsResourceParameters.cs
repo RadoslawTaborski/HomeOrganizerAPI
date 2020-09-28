@@ -6,5 +6,6 @@
         protected override int DefaultPageSize { get; set; } = 15;
         public string CategoryId { get; set; }
         public string SubcategoryId { get; set; }
+        public int StateId { get; set; } = 2;
     }
 }

@@ -32,6 +32,8 @@ namespace HomeOrganizerAPI.Controllers
         public class Dto : Model
         {
             public string Name { get; set; }
+            public string Description { get; set; }
+            public bool Visible { get; set; }
 
             public static Dto FromObject(ShoppingList entity)
             {
@@ -39,6 +41,8 @@ namespace HomeOrganizerAPI.Controllers
                 {
                     Id = entity.Id,
                     Name = entity.Name,
+                    Description = entity.Description,
+                    Visible = entity.Visible,
                     CreateTime = entity.CreateTime,
                     UpdateTime = entity.UpdateTime,
                     DeleteTime = entity.DeleteTime,
@@ -51,6 +55,8 @@ namespace HomeOrganizerAPI.Controllers
                 {
                     Id = dto.Id,
                     Name = dto.Name,
+                    Description = dto.Description,
+                    Visible = dto.Visible,
                     CreateTime = dto.CreateTime,
                     UpdateTime = dto.UpdateTime,
                     DeleteTime = dto.DeleteTime

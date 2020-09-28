@@ -31,6 +31,8 @@ namespace HomeOrganizerAPI.Repositories
                 var arg = castedParams.CategoryId.Trim();
                 collection = collection.Where(i => i.Category.CategoryId.ToString() == arg);
             }
+
+            collection = collection.Where(i => i.StateId <= castedParams.StateId || i.StateId == null);
         }
     }
 }
