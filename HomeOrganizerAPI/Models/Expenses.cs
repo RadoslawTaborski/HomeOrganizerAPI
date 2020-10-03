@@ -5,7 +5,6 @@ namespace HomeOrganizerAPI.Models
 {
     public partial class Expenses : Model
     {
-        public int Id { get; set; }
         public string Name { get; set; }
         public decimal Value { get; set; }
         public int PayerId { get; set; }

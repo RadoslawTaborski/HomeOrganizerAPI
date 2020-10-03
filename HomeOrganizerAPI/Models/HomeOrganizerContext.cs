@@ -21,6 +21,7 @@ namespace HomeOrganizerAPI.Models
         public virtual DbSet<Item> Item { get; set; }
         public virtual DbSet<PermanentItem> PermanentItem { get; set; }
         public virtual DbSet<Saldo> Saldo { get; set; }
+        public virtual DbSet<ShoppingItem> ShoppingItem { get; set; }
         public virtual DbSet<ShoppingList> ShoppingList { get; set; }
         public virtual DbSet<State> State { get; set; }
         public virtual DbSet<Subcategory> Subcategory { get; set; }
@@ -268,6 +269,56 @@ namespace HomeOrganizerAPI.Models
                     .HasColumnType("decimal(10,0)");
             });
 
+            modelBuilder.Entity<ShoppingItem>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("shopping_item");
+
+                entity.Property(e => e.Archived).HasColumnName("archived");
+
+                entity.Property(e => e.Bought).HasColumnName("bought");
+
+                entity.Property(e => e.CategoryId)
+                    .HasColumnName("category_id")
+                    .HasColumnType("int(11)");
+
+                entity.Property(e => e.CreateTime)
+                    .HasColumnName("create_time")
+                    .HasDefaultValueSql("'0000-00-00 00:00:00'");
+
+                entity.Property(e => e.DeleteTime).HasColumnName("delete_time");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasColumnType("int(11)");
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasColumnName("name")
+                    .HasMaxLength(60)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Quantity)
+                    .HasColumnName("quantity")
+                    .HasMaxLength(60)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ShoppingListId)
+                    .HasColumnName("shopping_list_id")
+                    .HasColumnType("int(11)");
+
+                entity.Property(e => e.StateId)
+                    .HasColumnName("state_id")
+                    .HasColumnType("int(11)");
+
+                entity.Property(e => e.UpdateTime).HasColumnName("update_time");
+
+                entity.Property(e => e.Visible)
+                    .HasColumnName("visible")
+                    .HasColumnType("tinyint(4)");
+            });
+
             modelBuilder.Entity<ShoppingList>(entity =>
             {
                 entity.ToTable("shopping_list");
@@ -282,6 +333,12 @@ namespace HomeOrganizerAPI.Models
 
                 entity.Property(e => e.DeleteTime).HasColumnName("delete_time");
 
+                entity.Property(e => e.Description)
+                    .IsRequired()
+                    .HasColumnName("description")
+                    .HasMaxLength(200)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasColumnName("name")
@@ -289,6 +346,10 @@ namespace HomeOrganizerAPI.Models
                     .IsUnicode(false);
 
                 entity.Property(e => e.UpdateTime).HasColumnName("update_time");
+
+                entity.Property(e => e.Visible)
+                    .HasColumnName("visible")
+                    .HasColumnType("tinyint(4)");
             });
 
             modelBuilder.Entity<State>(entity =>

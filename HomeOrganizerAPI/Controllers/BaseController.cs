@@ -47,9 +47,9 @@ namespace HomeOrganizerAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<DTO>> BasePost([FromBody] DTO value)
         {
-            await _repo.Add(ToObject(value));
+            var added = await _repo.Add(ToObject(value));
 
-            return CreatedAtAction(nameof(T), new { id = value.Id }, value);
+            return CreatedAtAction(nameof(BaseGet), new { id = added.Id }, added);
         }
 
         [HttpPut]
@@ -57,8 +57,8 @@ namespace HomeOrganizerAPI.Controllers
         {
             try
             {
-                await _repo.Update(ToObject(value));
-                return Ok();
+                var added = await _repo.Update(ToObject(value));
+                return CreatedAtAction(nameof(BaseGet), new { id = added.Id }, added);
             }
             catch (DbUpdateConcurrencyException)
             {

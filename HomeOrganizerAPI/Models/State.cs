@@ -10,7 +10,6 @@ namespace HomeOrganizerAPI.Models
             Item = new HashSet<Item>();
         }
 
-        public int Id { get; set; }
         public string Name { get; set; }
 
         public virtual ICollection<Item> Item { get; set; }

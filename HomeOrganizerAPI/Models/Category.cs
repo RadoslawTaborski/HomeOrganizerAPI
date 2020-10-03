@@ -10,7 +10,6 @@ namespace HomeOrganizerAPI.Models
             Subcategory = new HashSet<Subcategory>();
         }
 
-        public int Id { get; set; }
         public string Name { get; set; }
 
         public virtual ICollection<Subcategory> Subcategory { get; set; }

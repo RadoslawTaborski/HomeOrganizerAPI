@@ -20,6 +20,11 @@ namespace HomeOrganizerAPI.Repositories
 
         protected abstract void CustomGet(ref IQueryable<T> collection, Parameters parameters);
 
+        protected async virtual Task<IEnumerable<T>> NotQuerableGet(IQueryable<T> collection)
+        {
+            return await collection.ToListAsync();
+        }
+
         public Repository(HomeOrganizerContext context)
         {
             _context = context;
@@ -44,26 +49,31 @@ namespace HomeOrganizerAPI.Repositories
 
             var collection = Data as IQueryable<T>;
 
+            collection = collection.Where(i => !i.DeleteTime.HasValue);
+
             CustomGet(ref collection, parameters);
 
-            return await collection.Skip(parameters.PageSize * (parameters.PageNumber - 1)).Take(parameters.PageSize).ToListAsync();
+            var enumerable = await NotQuerableGet(collection);
+
+            return enumerable.Skip(parameters.PageSize * (parameters.PageNumber - 1)).Take(parameters.PageSize);
         }
 
-        public async Task<bool> Add(T element)
+        public async Task<T> Add(T element)
         {
+            element.CreateTime = DateTimeOffset.Now;
             Data.Add(element);
             await _context.SaveChangesAsync();
 
-            return true;
+            return element;
         }
 
-        public async Task<bool> Update(T element)
+        public async Task<T> Update(T element)
         {
             element.UpdateTime = DateTimeOffset.Now;
             _context.Entry(element).State = EntityState.Modified;
             await _context.SaveChangesAsync();
 
-            return true;
+            return element;
         }
 
         public async Task<bool> DeleteItem(int id)
@@ -81,7 +91,7 @@ namespace HomeOrganizerAPI.Repositories
             return true;
         }
 
-        public async Task<bool> Exists(int id)
+        public async Task<bool> Exists(int? id)
         {
             var entity = await Data.FindAsync(id);
             return entity != null;
