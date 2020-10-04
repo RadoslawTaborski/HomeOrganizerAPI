@@ -7,15 +7,15 @@ namespace HomeOrganizerAPI.ResourceParameters
 {
     public abstract class Parameters
     {
-        protected abstract int DefaultPageSize {get; set;}
+        protected abstract int PageSize {get; set;}
 
         public abstract int MaxPageSize { get; set; }
         public int PageNumber { get; set; } = 1;
 
-        public int PageSize
+        public int DefaultPageSize
         {
-            get => DefaultPageSize;
-            set => DefaultPageSize = (value > MaxPageSize) ? MaxPageSize : value;
+            get => PageSize;
+            set => PageSize = (value > MaxPageSize) ? MaxPageSize : value;
         }
     }
 }

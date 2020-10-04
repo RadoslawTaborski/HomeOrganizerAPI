@@ -12,7 +12,8 @@ using Microsoft.EntityFrameworkCore.Internal;
 
 namespace HomeOrganizerAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     public class ItemsController : BaseController<Item, Item, ItemsController.Dto>
     {

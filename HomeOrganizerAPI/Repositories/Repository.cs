@@ -58,7 +58,7 @@ namespace HomeOrganizerAPI.Repositories
             var enumerable = await NotQuerableGet(collection);
             var lenght = enumerable.Count();
 
-            return (enumerable.Skip(parameters.PageSize * (parameters.PageNumber - 1)).Take(parameters.PageSize), lenght);
+            return (enumerable.Skip(parameters.DefaultPageSize * (parameters.PageNumber - 1)).Take(parameters.DefaultPageSize), lenght);
         }
 
         public async Task<T> Add(T element)

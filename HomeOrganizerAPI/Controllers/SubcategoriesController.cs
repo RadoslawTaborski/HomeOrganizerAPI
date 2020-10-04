@@ -13,7 +13,8 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace HomeOrganizerAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     public class SubcategoriesController : BaseController<Subcategory, Subcategory, SubcategoriesController.Dto>
     {

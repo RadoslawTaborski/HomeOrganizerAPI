@@ -50,7 +50,7 @@ namespace HomeOrganizerAPI.Controllers
         {
             var added = await _repo.Add(ToObject(value));
 
-            return CreatedAtAction(nameof(BaseGet), new { id = added.Id }, added);
+            return CreatedAtAction(nameof(BaseGet), new { id = added.Id, version = "v1" }, added);
         }
 
         [HttpPut]
@@ -59,7 +59,7 @@ namespace HomeOrganizerAPI.Controllers
             try
             {
                 var added = await _repo.Update(ToObject(value));
-                return CreatedAtAction(nameof(BaseGet), new { id = added.Id }, added);
+                return CreatedAtAction(nameof(BaseGet), new { id = added.Id, version = "v1" }, added);
             }
             catch (DbUpdateConcurrencyException)
             {
