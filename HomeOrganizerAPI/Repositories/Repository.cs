@@ -35,12 +35,14 @@ namespace HomeOrganizerAPI.Repositories
             return await Data.FindAsync(id);
         }
 
-        public async Task<IEnumerable<V>> Get()
+        public async Task<(IEnumerable<V>, int)> Get()
         {
-            return await DataView.ToListAsync();
+            IEnumerable<V> collection = await DataView.ToListAsync();
+
+            return (collection, collection.Count());
         }
 
-        public async Task<IEnumerable<T>> Get(Parameters parameters)
+        public async Task<(IEnumerable<T> Collection, int Lenght)> Get(Parameters parameters)
         {
             if (parameters == null)
             {
@@ -54,8 +56,9 @@ namespace HomeOrganizerAPI.Repositories
             CustomGet(ref collection, parameters);
 
             var enumerable = await NotQuerableGet(collection);
+            var lenght = enumerable.Count();
 
-            return enumerable.Skip(parameters.PageSize * (parameters.PageNumber - 1)).Take(parameters.PageSize);
+            return (enumerable.Skip(parameters.PageSize * (parameters.PageNumber - 1)).Take(parameters.PageSize), lenght);
         }
 
         public async Task<T> Add(T element)

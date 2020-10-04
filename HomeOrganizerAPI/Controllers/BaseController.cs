@@ -28,8 +28,9 @@ namespace HomeOrganizerAPI.Controllers
 
         public async Task<ActionResult<ResponseData<DTO>>> BaseGet(Parameters resourceParameters)
         {
-            var data = (await _repo.Get(resourceParameters)).Select(i => FromObject(i)).ToArray();
-            return Ok(ControllerHelper.GenerateResponse(data, data.Length));
+            var (Collection, Lenght) = await _repo.Get(resourceParameters);
+            var collection = Collection.Select(i => FromObject(i)).ToArray();
+            return Ok(ControllerHelper.GenerateResponse(collection, Lenght));
         }
 
         [HttpGet("{id}")]

@@ -8,6 +8,6 @@ namespace HomeOrganizerAPI.ResourceParameters
     public class DefaultParameters : Parameters
     {
         public override int MaxPageSize { get; set; } = 50;
-        protected override int DefaultPageSize { get; set; } = 20;
+        protected override int DefaultPageSize { get; set; } = 50;
     }
 }
