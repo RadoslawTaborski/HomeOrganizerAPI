@@ -14,7 +14,7 @@ namespace HomeOrganizerAPI.Helpers
             return new ResponseData<T>
             {
                 data = data,
-                total = data.Length,
+                total = total,
                 message = "ok",
                 error = ""
             };
