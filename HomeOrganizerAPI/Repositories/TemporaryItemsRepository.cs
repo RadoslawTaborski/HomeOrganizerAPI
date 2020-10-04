@@ -33,5 +33,11 @@ namespace HomeOrganizerAPI.Repositories
                 collection = collection.Where(i => i.Category.CategoryId.ToString() == arg);
             }
         }
+
+        protected override async Task<IEnumerable<Item>> NotQuerableGet(IQueryable<Item> collection)
+        {
+            IEnumerable<Item> notQuerableCollection = (await collection.ToListAsync()).OrderBy(i => i.CategoryId);
+            return notQuerableCollection;
+        }
     }
 }

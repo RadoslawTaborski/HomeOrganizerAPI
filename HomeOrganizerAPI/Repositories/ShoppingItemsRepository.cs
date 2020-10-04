@@ -38,7 +38,7 @@ namespace HomeOrganizerAPI.Repositories
         protected override async Task<IEnumerable<Item>> NotQuerableGet(IQueryable<Item> collection)
         {
             IEnumerable<Item> notQuerableCollection = await collection.ToListAsync();
-            notQuerableCollection = notQuerableCollection.Where(i => !IsNotVisibleOrArchived(i));
+            notQuerableCollection = notQuerableCollection.Where(i => !IsNotVisibleOrArchived(i)).OrderBy(i => i.CategoryId);
             return notQuerableCollection;
         }
 
