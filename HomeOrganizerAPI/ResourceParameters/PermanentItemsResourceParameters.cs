@@ -1,6 +1,4 @@
-﻿using HomeOrganizerAPI.ResourceParameters;
-
-namespace HomeOrganizerAPI.ResourceParameters
+﻿namespace HomeOrganizerAPI.ResourceParameters
 {
     public class PermanentItemsResourceParameters : Parameters
     {

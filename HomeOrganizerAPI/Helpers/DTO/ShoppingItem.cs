@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace HomeOrganizerAPI.Models
+namespace HomeOrganizerAPI.Helpers.DTO
 {
-    public partial record ShoppingItem : Model
+    public record ShoppingItem : DtoModel
     {
         public string Name { get; set; }
         public int? StateId { get; set; }

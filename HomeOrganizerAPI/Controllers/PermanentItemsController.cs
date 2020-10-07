@@ -1,57 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using HomeOrganizerAPI.Models;
+﻿using HomeOrganizerAPI.Models;
 using HomeOrganizerAPI.Repositories;
 using HomeOrganizerAPI.ResourceParameters;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
+using Dto = HomeOrganizerAPI.Helpers.DTO.PermanentItem;
 
 namespace HomeOrganizerAPI.Controllers
 {
     [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
-    public class PermanentItemsController : BaseController<Item, PermanentItem, PermanentItem>
+    public class PermanentItemsController : BaseController<Item, PermanentItem, Dto>
     {
         public PermanentItemsController(HomeOrganizerContext context) : base(new PermanentItemsRepository(context))
         {
         }
 
         [HttpGet]
-        public async Task<ActionResult<ResponseData<PermanentItem>>> Get([FromQuery] PermanentItemsResourceParameters resourceParameters)
+        public async Task<ActionResult<ResponseData<Dto>>> Get([FromQuery] PermanentItemsResourceParameters resourceParameters)
         {
             return await BaseGet(resourceParameters);
-        }
-
-        protected override PermanentItem FromObject(Item obj)
-        {
-            return new PermanentItem
-            {
-                Id = obj.Id,
-                Name = obj.Name,
-                StateId = obj.StateId,
-                CategoryId = obj.CategoryId,
-                CreateTime = obj.CreateTime,
-                UpdateTime = obj.UpdateTime,
-                DeleteTime = obj.DeleteTime,
-            };
-        }
-
-        protected override Item ToObject(PermanentItem obj)
-        {
-            return new Item
-            {
-                Id = obj.Id,
-                Name = obj.Name,
-                StateId = obj.StateId,
-                CategoryId = obj.CategoryId,
-                CreateTime = obj.CreateTime,
-                UpdateTime = obj.UpdateTime,
-                DeleteTime = obj.DeleteTime
-            };
         }
     }
 }

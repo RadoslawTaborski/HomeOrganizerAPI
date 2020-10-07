@@ -1,35 +1,34 @@
-﻿using HomeOrganizerAPI.Helpers;
+﻿using AutoMapper;
+using HomeOrganizerAPI.Helpers;
+using HomeOrganizerAPI.Helpers.DTO;
 using HomeOrganizerAPI.Models;
 using HomeOrganizerAPI.Repositories;
 using HomeOrganizerAPI.ResourceParameters;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace HomeOrganizerAPI.Controllers
 {
-    public abstract class BaseController<T,V, DTO> : Controller
-        where T: Model
-        where V: Model
-        where DTO: Model
+    public abstract class BaseController<T, V, DTO> : Controller
+        where T : Model
+        where V : Model
+        where DTO : DtoModel
     {
-        private readonly Repository<T,V> _repo;
+        private readonly Repository<T, V> _repo;
+        protected IMapper _mapper;
 
         public BaseController(Repository<T, V> repository)
         {
             _repo = repository;
+            _mapper = AutoMapperConfig.MapperConfiguration.CreateMapper();
         }
-
-        protected abstract DTO FromObject(T obj);
-        protected abstract T ToObject(DTO obj);
 
         public async Task<ActionResult<ResponseData<DTO>>> BaseGet(Parameters resourceParameters)
         {
             var (Collection, Lenght) = await _repo.Get(resourceParameters);
-            var collection = Collection.Select(i => FromObject(i)).ToArray();
+            var collection = Collection.Select(i => ToDto(i)).ToArray();
             return Ok(ControllerHelper.GenerateResponse(collection, Lenght));
         }
 
@@ -42,13 +41,13 @@ namespace HomeOrganizerAPI.Controllers
                 return NotFound();
             }
 
-            return Ok(FromObject(entity));
+            return Ok(ToDto(entity));
         }
 
         [HttpPost]
         public async Task<ActionResult<DTO>> BasePost([FromBody] DTO value)
         {
-            var added = await _repo.Add(ToObject(value));
+            var added = await _repo.Add(FromDto(value));
 
             return CreatedAtAction(nameof(BaseGet), new { id = added.Id, version = "v1" }, added);
         }
@@ -58,7 +57,7 @@ namespace HomeOrganizerAPI.Controllers
         {
             try
             {
-                var added = await _repo.Update(ToObject(value));
+                var added = await _repo.Update(FromDto(value));
                 return CreatedAtAction(nameof(BaseGet), new { id = added.Id, version = "v1" }, added);
             }
             catch (DbUpdateConcurrencyException)
@@ -83,6 +82,16 @@ namespace HomeOrganizerAPI.Controllers
                 return Ok();
             }
             return NotFound();
+        }
+
+        protected DTO ToDto(T entity)
+        {
+            return _mapper.Map<DTO>(entity);
+        }
+
+        protected T FromDto(DTO dto)
+        {
+            return _mapper.Map<T>(dto);
         }
     }
 }

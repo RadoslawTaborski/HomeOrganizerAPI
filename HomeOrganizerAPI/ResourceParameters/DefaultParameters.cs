@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace HomeOrganizerAPI.ResourceParameters
+﻿namespace HomeOrganizerAPI.ResourceParameters
 {
     public class DefaultParameters : Parameters
     {

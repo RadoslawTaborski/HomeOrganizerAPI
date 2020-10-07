@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace HomeOrganizerAPI.Models
 {
-    public partial class Subcategory : Model
+    public partial record Subcategory : Model
     {
         public Subcategory()
         {

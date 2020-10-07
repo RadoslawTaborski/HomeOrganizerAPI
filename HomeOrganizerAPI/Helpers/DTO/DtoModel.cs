@@ -1,8 +1,9 @@
-﻿using System;
+﻿using HomeOrganizerAPI.Models;
+using System;
 
-namespace HomeOrganizerAPI.Models
+namespace HomeOrganizerAPI.Helpers.DTO
 {
-    public record Model : IModel
+    public record DtoModel : IModel
     {
         public int? Id { get; set; }
         public DateTimeOffset CreateTime { get; set; }

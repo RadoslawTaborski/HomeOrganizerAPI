@@ -1,6 +1,6 @@
-﻿namespace HomeOrganizerAPI.Models
+﻿namespace HomeOrganizerAPI.Helpers.DTO
 {
-    public partial record PermanentItem : Model
+    public record PermanentItem : DtoModel
     {
         public string Name { get; set; }
         public int? StateId { get; set; }

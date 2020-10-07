@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace HomeOrganizerAPI.Models
 {
-    public partial class State : Model
+    public partial record State : Model
     {
         public State()
         {

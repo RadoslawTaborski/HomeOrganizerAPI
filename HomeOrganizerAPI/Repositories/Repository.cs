@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace HomeOrganizerAPI.Repositories
 {
-    public abstract class Repository<T, V> 
-        where T: Model 
-        where V: Model
+    public abstract class Repository<T, V>
+        where T : Model
+        where V : Model
     {
         protected readonly HomeOrganizerContext _context;
 

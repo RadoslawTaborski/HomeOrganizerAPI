@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace HomeOrganizerAPI.Models
+﻿namespace HomeOrganizerAPI.Models
 {
-    public partial class ExpensesSettings : Model
+    public partial record ExpensesSettings : Model
     {
         public int User1Id { get; set; }
         public int User2Id { get; set; }

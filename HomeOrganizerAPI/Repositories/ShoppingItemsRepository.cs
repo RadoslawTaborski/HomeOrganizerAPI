@@ -1,7 +1,6 @@
 ﻿using HomeOrganizerAPI.Models;
 using HomeOrganizerAPI.ResourceParameters;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -47,14 +46,16 @@ namespace HomeOrganizerAPI.Repositories
             if (i.ShoppingListId == null)
             {
                 return false;
-            } else
+            }
+            else
             {
                 var collection = _context.ShoppingList as IQueryable<ShoppingList>;
                 var list = collection.Where(l => l.Id == i.ShoppingListId).FirstOrDefault();
                 if (list.DeleteTime.HasValue)
                 {
                     return true;
-                } else
+                }
+                else
                 {
                     return !list.Visible;
                 }

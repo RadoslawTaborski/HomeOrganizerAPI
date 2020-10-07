@@ -2,7 +2,7 @@
 
 namespace HomeOrganizerAPI.Models
 {
-    public record Model : IModel
+    public interface IModel
     {
         public int? Id { get; set; }
         public DateTimeOffset CreateTime { get; set; }

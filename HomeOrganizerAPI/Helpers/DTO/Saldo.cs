@@ -1,6 +1,6 @@
-﻿namespace HomeOrganizerAPI.Models
+﻿namespace HomeOrganizerAPI.Helpers.DTO
 {
-    public partial record Saldo : Model
+    public record Saldo : DtoModel
     {
         public int PayerId { get; set; }
         public int RecipientId { get; set; }
