@@ -1,4 +1,5 @@
-﻿using HomeOrganizerAPI.Models;
+﻿using HomeOrganizerAPI.Helpers;
+using HomeOrganizerAPI.Models;
 using HomeOrganizerAPI.ResourceParameters;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
@@ -18,6 +19,16 @@ namespace HomeOrganizerAPI.Repositories
         protected override void CustomGet(ref IQueryable<Item> collection, Parameters parameters)
         {
             ItemsResourceParameters castedParams = parameters as ItemsResourceParameters;
+            if (!isNull(castedParams.GroupId))
+            {
+                var arg = castedParams.GroupId.Trim();
+                collection = collection.Where(i => i.GroupId.ToString() == arg);
+            }
+            else
+            {
+                collection = Enumerable.Empty<Item>().AsAsyncQueryable();
+                return;
+            }
             if (!isNull(castedParams.SubcategoryId))
             {
                 var arg = castedParams.SubcategoryId.Trim();

@@ -1,4 +1,5 @@
-﻿using HomeOrganizerAPI.Models;
+﻿using HomeOrganizerAPI.Helpers;
+using HomeOrganizerAPI.Models;
 using HomeOrganizerAPI.ResourceParameters;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -19,7 +20,17 @@ namespace HomeOrganizerAPI.Repositories
         protected override void CustomGet(ref IQueryable<Item> collection, Parameters parameters)
         {
             collection = collection.Where(i => i.ShoppingListId != null);
-            TemporaryItemsResourceParameters castedParams = parameters as TemporaryItemsResourceParameters;
+            var castedParams = parameters as TemporaryItemsResourceParameters;
+            if (!isNull(castedParams.GroupId))
+            {
+                var arg = castedParams.GroupId.Trim();
+                collection = collection.Where(i => i.GroupId.ToString() == arg);
+            }
+            else
+            {
+                collection = Enumerable.Empty<Item>().AsAsyncQueryable();
+                return;
+            }
             if (!isNull(castedParams.SubcategoryId))
             {
                 var arg = castedParams.SubcategoryId.Trim();

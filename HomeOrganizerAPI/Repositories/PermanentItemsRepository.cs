@@ -1,4 +1,5 @@
-﻿using HomeOrganizerAPI.Models;
+﻿using HomeOrganizerAPI.Helpers;
+using HomeOrganizerAPI.Models;
 using HomeOrganizerAPI.ResourceParameters;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -19,7 +20,17 @@ namespace HomeOrganizerAPI.Repositories
         protected override void CustomGet(ref IQueryable<Item> collection, Parameters parameters)
         {
             collection = collection.Where(i => i.ShoppingListId == null);
-            PermanentItemsResourceParameters castedParams = parameters as PermanentItemsResourceParameters;
+            var castedParams = parameters as PermanentItemsResourceParameters;
+            if (!isNull(castedParams.GroupId))
+            {
+                var arg = castedParams.GroupId.Trim();
+                collection = collection.Where(i => i.GroupId.ToString() == arg);
+            }
+            else
+            {
+                collection = Enumerable.Empty<Item>().AsAsyncQueryable();
+                return;
+            }
             if (!isNull(castedParams.SubcategoryId))
             {
                 var arg = castedParams.SubcategoryId.Trim();
@@ -36,12 +47,8 @@ namespace HomeOrganizerAPI.Repositories
                 var arg = castedParams.StateId.Trim();
                 collection = collection.Where(i => i.StateId <= int.Parse(arg));
             }
-        }
 
-        protected override async Task<IEnumerable<Item>> NotQuerableGet(IQueryable<Item> collection)
-        {
-            IEnumerable<Item> notQuerableCollection = (await collection.ToListAsync()).OrderBy(i => i.CategoryId);
-            return notQuerableCollection;
+            collection = collection.OrderByDescending(t => t.Counter).ThenBy(t => t.CategoryId);
         }
     }
 }

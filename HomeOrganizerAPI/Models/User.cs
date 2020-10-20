@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace HomeOrganizerAPI.Models
 {
@@ -10,6 +11,7 @@ namespace HomeOrganizerAPI.Models
             ExpensesRecipient = new HashSet<Expenses>();
             ExpensesSettingsUser1 = new HashSet<ExpensesSettings>();
             ExpensesSettingsUser2 = new HashSet<ExpensesSettings>();
+            UserGroups = new HashSet<UserGroups>();
         }
 
         public string Username { get; set; }
@@ -20,5 +22,6 @@ namespace HomeOrganizerAPI.Models
         public virtual ICollection<Expenses> ExpensesRecipient { get; set; }
         public virtual ICollection<ExpensesSettings> ExpensesSettingsUser1 { get; set; }
         public virtual ICollection<ExpensesSettings> ExpensesSettingsUser2 { get; set; }
+        public virtual ICollection<UserGroups> UserGroups { get; set; }
     }
 }

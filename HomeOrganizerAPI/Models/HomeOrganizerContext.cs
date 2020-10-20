@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace HomeOrganizerAPI.Models
 {
@@ -16,6 +18,7 @@ namespace HomeOrganizerAPI.Models
         public virtual DbSet<Category> Category { get; set; }
         public virtual DbSet<Expenses> Expenses { get; set; }
         public virtual DbSet<ExpensesSettings> ExpensesSettings { get; set; }
+        public virtual DbSet<Group> Group { get; set; }
         public virtual DbSet<Item> Item { get; set; }
         public virtual DbSet<PermanentItem> PermanentItem { get; set; }
         public virtual DbSet<Saldo> Saldo { get; set; }
@@ -25,6 +28,7 @@ namespace HomeOrganizerAPI.Models
         public virtual DbSet<Subcategory> Subcategory { get; set; }
         public virtual DbSet<TemporaryItem> TemporaryItem { get; set; }
         public virtual DbSet<User> User { get; set; }
+        public virtual DbSet<UserGroups> UserGroups { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -32,15 +36,24 @@ namespace HomeOrganizerAPI.Models
             {
                 entity.ToTable("category");
 
+                entity.HasIndex(e => e.GroupId)
+                    .HasName("fk_category_group1_idx");
+
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
                     .HasColumnType("int(11)");
 
                 entity.Property(e => e.CreateTime)
                     .HasColumnName("create_time")
-                    .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                    .HasDefaultValueSql("'current_timestamp()'");
 
-                entity.Property(e => e.DeleteTime).HasColumnName("delete_time");
+                entity.Property(e => e.DeleteTime)
+                    .HasColumnName("delete_time")
+                    .HasDefaultValueSql("'NULL'");
+
+                entity.Property(e => e.GroupId)
+                    .HasColumnName("group_id")
+                    .HasColumnType("int(11)");
 
                 entity.Property(e => e.Name)
                     .IsRequired()
@@ -48,12 +61,23 @@ namespace HomeOrganizerAPI.Models
                     .HasMaxLength(60)
                     .IsUnicode(false);
 
-                entity.Property(e => e.UpdateTime).HasColumnName("update_time");
+                entity.Property(e => e.UpdateTime)
+                    .HasColumnName("update_time")
+                    .HasDefaultValueSql("'NULL'");
+
+                entity.HasOne(d => d.Group)
+                    .WithMany(p => p.Category)
+                    .HasForeignKey(d => d.GroupId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("fk_category_group1");
             });
 
             modelBuilder.Entity<Expenses>(entity =>
             {
                 entity.ToTable("expenses");
+
+                entity.HasIndex(e => e.GroupId)
+                    .HasName("fk_expenses_group1_idx");
 
                 entity.HasIndex(e => e.PayerId)
                     .HasName("fk_expenses_user1_idx");
@@ -67,9 +91,15 @@ namespace HomeOrganizerAPI.Models
 
                 entity.Property(e => e.CreateTime)
                     .HasColumnName("create_time")
-                    .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                    .HasDefaultValueSql("'current_timestamp()'");
 
-                entity.Property(e => e.DeleteTime).HasColumnName("delete_time");
+                entity.Property(e => e.DeleteTime)
+                    .HasColumnName("delete_time")
+                    .HasDefaultValueSql("'NULL'");
+
+                entity.Property(e => e.GroupId)
+                    .HasColumnName("group_id")
+                    .HasColumnType("int(11)");
 
                 entity.Property(e => e.Name)
                     .IsRequired()
@@ -85,11 +115,19 @@ namespace HomeOrganizerAPI.Models
                     .HasColumnName("recipient_id")
                     .HasColumnType("int(11)");
 
-                entity.Property(e => e.UpdateTime).HasColumnName("update_time");
+                entity.Property(e => e.UpdateTime)
+                    .HasColumnName("update_time")
+                    .HasDefaultValueSql("'NULL'");
 
                 entity.Property(e => e.Value)
                     .HasColumnName("value")
                     .HasColumnType("decimal(10,0)");
+
+                entity.HasOne(d => d.Group)
+                    .WithMany(p => p.Expenses)
+                    .HasForeignKey(d => d.GroupId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("fk_expenses_group1");
 
                 entity.HasOne(d => d.Payer)
                     .WithMany(p => p.ExpensesPayer)
@@ -111,6 +149,9 @@ namespace HomeOrganizerAPI.Models
 
                 entity.ToTable("expenses_settings");
 
+                entity.HasIndex(e => e.GroupId)
+                    .HasName("fk_expenses_settings_group1_idx");
+
                 entity.HasIndex(e => e.User1Id)
                     .HasName("fk_expenses_settings_user1_idx");
 
@@ -127,13 +168,27 @@ namespace HomeOrganizerAPI.Models
 
                 entity.Property(e => e.CreateTime)
                     .HasColumnName("create_time")
-                    .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                    .HasDefaultValueSql("'current_timestamp()'");
 
-                entity.Property(e => e.DeleteTime).HasColumnName("delete_time");
+                entity.Property(e => e.DeleteTime)
+                    .HasColumnName("delete_time")
+                    .HasDefaultValueSql("'NULL'");
 
-                entity.Property(e => e.UpdateTime).HasColumnName("update_time");
+                entity.Property(e => e.GroupId)
+                    .HasColumnName("group_id")
+                    .HasColumnType("int(11)");
+
+                entity.Property(e => e.UpdateTime)
+                    .HasColumnName("update_time")
+                    .HasDefaultValueSql("'NULL'");
 
                 entity.Property(e => e.Value).HasColumnName("value");
+
+                entity.HasOne(d => d.Group)
+                    .WithMany(p => p.ExpensesSettings)
+                    .HasForeignKey(d => d.GroupId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("fk_expenses_settings_group1");
 
                 entity.HasOne(d => d.User1)
                     .WithMany(p => p.ExpensesSettingsUser1)
@@ -148,12 +203,42 @@ namespace HomeOrganizerAPI.Models
                     .HasConstraintName("fk_expenses_settings_user2");
             });
 
+            modelBuilder.Entity<Group>(entity =>
+            {
+                entity.ToTable("group");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasColumnType("int(11)");
+
+                entity.Property(e => e.CreateTime)
+                    .HasColumnName("create_time")
+                    .HasDefaultValueSql("'current_timestamp()'");
+
+                entity.Property(e => e.DeleteTime)
+                    .HasColumnName("delete_time")
+                    .HasDefaultValueSql("'NULL'");
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasColumnName("name")
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.UpdateTime)
+                    .HasColumnName("update_time")
+                    .HasDefaultValueSql("'NULL'");
+            });
+
             modelBuilder.Entity<Item>(entity =>
             {
                 entity.ToTable("item");
 
                 entity.HasIndex(e => e.CategoryId)
                     .HasName("fk_item_subcategory1_idx");
+
+                entity.HasIndex(e => e.GroupId)
+                    .HasName("fk_item_group1_idx");
 
                 entity.HasIndex(e => e.ShoppingListId)
                     .HasName("fk_item_shopping_list1_idx");
@@ -165,17 +250,29 @@ namespace HomeOrganizerAPI.Models
                     .HasColumnName("id")
                     .HasColumnType("int(11)");
 
-                entity.Property(e => e.Bought).HasColumnName("bought");
+                entity.Property(e => e.Bought)
+                    .HasColumnName("bought")
+                    .HasDefaultValueSql("'NULL'");
 
                 entity.Property(e => e.CategoryId)
                     .HasColumnName("category_id")
                     .HasColumnType("int(11)");
 
+                entity.Property(e => e.Counter)
+                    .HasColumnName("counter")
+                    .HasColumnType("bigint(20)");
+
                 entity.Property(e => e.CreateTime)
                     .HasColumnName("create_time")
-                    .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                    .HasDefaultValueSql("'current_timestamp()'");
 
-                entity.Property(e => e.DeleteTime).HasColumnName("delete_time");
+                entity.Property(e => e.DeleteTime)
+                    .HasColumnName("delete_time")
+                    .HasDefaultValueSql("'NULL'");
+
+                entity.Property(e => e.GroupId)
+                    .HasColumnName("group_id")
+                    .HasColumnType("int(11)");
 
                 entity.Property(e => e.Name)
                     .IsRequired()
@@ -186,23 +283,34 @@ namespace HomeOrganizerAPI.Models
                 entity.Property(e => e.Quantity)
                     .HasColumnName("quantity")
                     .HasMaxLength(60)
-                    .IsUnicode(false);
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'NULL'");
 
                 entity.Property(e => e.ShoppingListId)
                     .HasColumnName("shopping_list_id")
-                    .HasColumnType("int(11)");
+                    .HasColumnType("int(11)")
+                    .HasDefaultValueSql("'NULL'");
 
                 entity.Property(e => e.StateId)
                     .HasColumnName("state_id")
-                    .HasColumnType("int(11)");
+                    .HasColumnType("int(11)")
+                    .HasDefaultValueSql("'NULL'");
 
-                entity.Property(e => e.UpdateTime).HasColumnName("update_time");
+                entity.Property(e => e.UpdateTime)
+                    .HasColumnName("update_time")
+                    .HasDefaultValueSql("'NULL'");
 
                 entity.HasOne(d => d.Category)
                     .WithMany(p => p.Item)
                     .HasForeignKey(d => d.CategoryId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("fk_item_subcategory1");
+
+                entity.HasOne(d => d.Group)
+                    .WithMany(p => p.Item)
+                    .HasForeignKey(d => d.GroupId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("fk_item_group1");
 
                 entity.HasOne(d => d.ShoppingList)
                     .WithMany(p => p.Item)
@@ -227,9 +335,15 @@ namespace HomeOrganizerAPI.Models
 
                 entity.Property(e => e.CreateTime)
                     .HasColumnName("create_time")
-                    .HasDefaultValueSql("'0000-00-00 00:00:00'");
+                    .HasDefaultValueSql("'current_timestamp()'");
 
-                entity.Property(e => e.DeleteTime).HasColumnName("delete_time");
+                entity.Property(e => e.DeleteTime)
+                    .HasColumnName("delete_time")
+                    .HasDefaultValueSql("'NULL'");
+
+                entity.Property(e => e.GroupId)
+                    .HasColumnName("group_id")
+                    .HasColumnType("int(11)");
 
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
@@ -243,9 +357,12 @@ namespace HomeOrganizerAPI.Models
 
                 entity.Property(e => e.StateId)
                     .HasColumnName("state_id")
-                    .HasColumnType("int(11)");
+                    .HasColumnType("int(11)")
+                    .HasDefaultValueSql("'NULL'");
 
-                entity.Property(e => e.UpdateTime).HasColumnName("update_time");
+                entity.Property(e => e.UpdateTime)
+                    .HasColumnName("update_time")
+                    .HasDefaultValueSql("'NULL'");
             });
 
             modelBuilder.Entity<Saldo>(entity =>
@@ -253,6 +370,10 @@ namespace HomeOrganizerAPI.Models
                 entity.HasNoKey();
 
                 entity.ToView("saldo");
+
+                entity.Property(e => e.GroupId)
+                    .HasColumnName("group_id")
+                    .HasColumnType("int(11)");
 
                 entity.Property(e => e.PayerId)
                     .HasColumnName("payer_id")
@@ -273,9 +394,13 @@ namespace HomeOrganizerAPI.Models
 
                 entity.ToView("shopping_item");
 
-                entity.Property(e => e.Archived).HasColumnName("archived");
+                entity.Property(e => e.Archived)
+                    .HasColumnName("archived")
+                    .HasDefaultValueSql("'NULL'");
 
-                entity.Property(e => e.Bought).HasColumnName("bought");
+                entity.Property(e => e.Bought)
+                    .HasColumnName("bought")
+                    .HasDefaultValueSql("'NULL'");
 
                 entity.Property(e => e.CategoryId)
                     .HasColumnName("category_id")
@@ -283,9 +408,15 @@ namespace HomeOrganizerAPI.Models
 
                 entity.Property(e => e.CreateTime)
                     .HasColumnName("create_time")
-                    .HasDefaultValueSql("'0000-00-00 00:00:00'");
+                    .HasDefaultValueSql("'current_timestamp()'");
 
-                entity.Property(e => e.DeleteTime).HasColumnName("delete_time");
+                entity.Property(e => e.DeleteTime)
+                    .HasColumnName("delete_time")
+                    .HasDefaultValueSql("'NULL'");
+
+                entity.Property(e => e.GroupId)
+                    .HasColumnName("group_id")
+                    .HasColumnType("int(11)");
 
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
@@ -300,17 +431,22 @@ namespace HomeOrganizerAPI.Models
                 entity.Property(e => e.Quantity)
                     .HasColumnName("quantity")
                     .HasMaxLength(60)
-                    .IsUnicode(false);
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'NULL'");
 
                 entity.Property(e => e.ShoppingListId)
                     .HasColumnName("shopping_list_id")
-                    .HasColumnType("int(11)");
+                    .HasColumnType("int(11)")
+                    .HasDefaultValueSql("'NULL'");
 
                 entity.Property(e => e.StateId)
                     .HasColumnName("state_id")
-                    .HasColumnType("int(11)");
+                    .HasColumnType("int(11)")
+                    .HasDefaultValueSql("'NULL'");
 
-                entity.Property(e => e.UpdateTime).HasColumnName("update_time");
+                entity.Property(e => e.UpdateTime)
+                    .HasColumnName("update_time")
+                    .HasDefaultValueSql("'NULL'");
 
                 entity.Property(e => e.Visible)
                     .HasColumnName("visible")
@@ -321,15 +457,20 @@ namespace HomeOrganizerAPI.Models
             {
                 entity.ToTable("shopping_list");
 
+                entity.HasIndex(e => e.GroupId)
+                    .HasName("fk_shopping_list_group1_idx");
+
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
                     .HasColumnType("int(11)");
 
                 entity.Property(e => e.CreateTime)
                     .HasColumnName("create_time")
-                    .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                    .HasDefaultValueSql("'current_timestamp()'");
 
-                entity.Property(e => e.DeleteTime).HasColumnName("delete_time");
+                entity.Property(e => e.DeleteTime)
+                    .HasColumnName("delete_time")
+                    .HasDefaultValueSql("'NULL'");
 
                 entity.Property(e => e.Description)
                     .IsRequired()
@@ -337,17 +478,29 @@ namespace HomeOrganizerAPI.Models
                     .HasMaxLength(200)
                     .IsUnicode(false);
 
+                entity.Property(e => e.GroupId)
+                    .HasColumnName("group_id")
+                    .HasColumnType("int(11)");
+
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasColumnName("name")
                     .HasMaxLength(60)
                     .IsUnicode(false);
 
-                entity.Property(e => e.UpdateTime).HasColumnName("update_time");
+                entity.Property(e => e.UpdateTime)
+                    .HasColumnName("update_time")
+                    .HasDefaultValueSql("'NULL'");
 
                 entity.Property(e => e.Visible)
                     .HasColumnName("visible")
                     .HasColumnType("tinyint(4)");
+
+                entity.HasOne(d => d.Group)
+                    .WithMany(p => p.ShoppingList)
+                    .HasForeignKey(d => d.GroupId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("fk_shopping_list_group1");
             });
 
             modelBuilder.Entity<State>(entity =>
@@ -360,16 +513,21 @@ namespace HomeOrganizerAPI.Models
 
                 entity.Property(e => e.CreateTime)
                     .HasColumnName("create_time")
-                    .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                    .HasDefaultValueSql("'current_timestamp()'");
 
-                entity.Property(e => e.DeleteTime).HasColumnName("delete_time");
+                entity.Property(e => e.DeleteTime)
+                    .HasColumnName("delete_time")
+                    .HasDefaultValueSql("'NULL'");
 
                 entity.Property(e => e.Name)
                     .HasColumnName("name")
                     .HasMaxLength(60)
-                    .IsUnicode(false);
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'NULL'");
 
-                entity.Property(e => e.UpdateTime).HasColumnName("update_time");
+                entity.Property(e => e.UpdateTime)
+                    .HasColumnName("update_time")
+                    .HasDefaultValueSql("'NULL'");
             });
 
             modelBuilder.Entity<Subcategory>(entity =>
@@ -378,6 +536,9 @@ namespace HomeOrganizerAPI.Models
 
                 entity.HasIndex(e => e.CategoryId)
                     .HasName("fk_subcategory_category1_idx");
+
+                entity.HasIndex(e => e.GroupId)
+                    .HasName("fk_subcategory_group1_idx");
 
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
@@ -389,9 +550,15 @@ namespace HomeOrganizerAPI.Models
 
                 entity.Property(e => e.CreateTime)
                     .HasColumnName("create_time")
-                    .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                    .HasDefaultValueSql("'current_timestamp()'");
 
-                entity.Property(e => e.DeleteTime).HasColumnName("delete_time");
+                entity.Property(e => e.DeleteTime)
+                    .HasColumnName("delete_time")
+                    .HasDefaultValueSql("'NULL'");
+
+                entity.Property(e => e.GroupId)
+                    .HasColumnName("group_id")
+                    .HasColumnType("int(11)");
 
                 entity.Property(e => e.Name)
                     .IsRequired()
@@ -399,13 +566,21 @@ namespace HomeOrganizerAPI.Models
                     .HasMaxLength(60)
                     .IsUnicode(false);
 
-                entity.Property(e => e.UpdateTime).HasColumnName("update_time");
+                entity.Property(e => e.UpdateTime)
+                    .HasColumnName("update_time")
+                    .HasDefaultValueSql("'NULL'");
 
                 entity.HasOne(d => d.Category)
                     .WithMany(p => p.Subcategory)
                     .HasForeignKey(d => d.CategoryId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("fk_subcategory_category1");
+
+                entity.HasOne(d => d.Group)
+                    .WithMany(p => p.Subcategory)
+                    .HasForeignKey(d => d.GroupId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("fk_subcategory_group1");
             });
 
             modelBuilder.Entity<TemporaryItem>(entity =>
@@ -414,7 +589,9 @@ namespace HomeOrganizerAPI.Models
 
                 entity.ToView("temporary_item");
 
-                entity.Property(e => e.Bought).HasColumnName("bought");
+                entity.Property(e => e.Bought)
+                    .HasColumnName("bought")
+                    .HasDefaultValueSql("'NULL'");
 
                 entity.Property(e => e.CategoryId)
                     .HasColumnName("category_id")
@@ -422,9 +599,15 @@ namespace HomeOrganizerAPI.Models
 
                 entity.Property(e => e.CreateTime)
                     .HasColumnName("create_time")
-                    .HasDefaultValueSql("'0000-00-00 00:00:00'");
+                    .HasDefaultValueSql("'current_timestamp()'");
 
-                entity.Property(e => e.DeleteTime).HasColumnName("delete_time");
+                entity.Property(e => e.DeleteTime)
+                    .HasColumnName("delete_time")
+                    .HasDefaultValueSql("'NULL'");
+
+                entity.Property(e => e.GroupId)
+                    .HasColumnName("group_id")
+                    .HasColumnType("int(11)");
 
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
@@ -439,13 +622,17 @@ namespace HomeOrganizerAPI.Models
                 entity.Property(e => e.Quantity)
                     .HasColumnName("quantity")
                     .HasMaxLength(60)
-                    .IsUnicode(false);
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'NULL'");
 
                 entity.Property(e => e.ShoppingListId)
                     .HasColumnName("shopping_list_id")
-                    .HasColumnType("int(11)");
+                    .HasColumnType("int(11)")
+                    .HasDefaultValueSql("'NULL'");
 
-                entity.Property(e => e.UpdateTime).HasColumnName("update_time");
+                entity.Property(e => e.UpdateTime)
+                    .HasColumnName("update_time")
+                    .HasDefaultValueSql("'NULL'");
             });
 
             modelBuilder.Entity<User>(entity =>
@@ -458,14 +645,17 @@ namespace HomeOrganizerAPI.Models
 
                 entity.Property(e => e.CreateTime)
                     .HasColumnName("create_time")
-                    .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                    .HasDefaultValueSql("'current_timestamp()'");
 
-                entity.Property(e => e.DeleteTime).HasColumnName("delete_time");
+                entity.Property(e => e.DeleteTime)
+                    .HasColumnName("delete_time")
+                    .HasDefaultValueSql("'NULL'");
 
                 entity.Property(e => e.Email)
                     .HasColumnName("email")
                     .HasMaxLength(255)
-                    .IsUnicode(false);
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'NULL'");
 
                 entity.Property(e => e.Password)
                     .IsRequired()
@@ -473,13 +663,62 @@ namespace HomeOrganizerAPI.Models
                     .HasMaxLength(32)
                     .IsUnicode(false);
 
-                entity.Property(e => e.UpdateTime).HasColumnName("update_time");
+                entity.Property(e => e.UpdateTime)
+                    .HasColumnName("update_time")
+                    .HasDefaultValueSql("'NULL'");
 
                 entity.Property(e => e.Username)
                     .IsRequired()
                     .HasColumnName("username")
                     .HasMaxLength(16)
                     .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<UserGroups>(entity =>
+            {
+                entity.ToTable("user_groups");
+
+                entity.HasIndex(e => e.GroupId)
+                    .HasName("fk_user_groups_group1_idx");
+
+                entity.HasIndex(e => e.UserId)
+                    .HasName("fk_user_groups_user1_idx");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasColumnType("int(11)");
+
+                entity.Property(e => e.CreateTime)
+                    .HasColumnName("create_time")
+                    .HasDefaultValueSql("'current_timestamp()'");
+
+                entity.Property(e => e.DeleteTime)
+                    .HasColumnName("delete_time")
+                    .HasDefaultValueSql("'NULL'");
+
+                entity.Property(e => e.GroupId)
+                    .HasColumnName("group_id")
+                    .HasColumnType("int(11)");
+
+                entity.Property(e => e.UpdateTime)
+                    .HasColumnName("update_time")
+                    .HasDefaultValueSql("'NULL'");
+
+                entity.Property(e => e.UserId)
+                    .HasColumnName("user_id")
+                    .HasColumnType("int(11)");
+
+                entity.HasOne(d => d.Group)
+                    .WithMany(p => p.UserGroups)
+                    .HasForeignKey(d => d.GroupId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("fk_user_groups_group1");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.UserGroups)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("fk_user_groups_user1");
             });
 
             OnModelCreatingPartial(modelBuilder);
