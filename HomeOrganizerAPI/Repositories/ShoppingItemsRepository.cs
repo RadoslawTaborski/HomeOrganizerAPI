@@ -1,16 +1,19 @@
 ﻿using HomeOrganizerAPI.Helpers;
 using HomeOrganizerAPI.Models;
 using HomeOrganizerAPI.ResourceParameters;
+using HomeOrganizerAPI.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+using Dto = HomeOrganizerAPI.Helpers.DTO.ShoppingItem;
+
 namespace HomeOrganizerAPI.Repositories
 {
-    public class ShoppingItemsRepository : Repository<Item, ShoppingItem>
+    public class ShoppingItemsRepository : Repository<Item, ShoppingItem, Dto>
     {
-        public ShoppingItemsRepository(HomeOrganizerContext context) : base(context)
+        public ShoppingItemsRepository(HomeOrganizerContext context, IPropertyMappingService propertyMappingService) : base(context, propertyMappingService)
         {
         }
 
@@ -48,7 +51,7 @@ namespace HomeOrganizerAPI.Repositories
         protected override async Task<IEnumerable<Item>> NotQuerableGet(IQueryable<Item> collection)
         {
             IEnumerable<Item> notQuerableCollection = await collection.ToListAsync();
-            notQuerableCollection = notQuerableCollection.Where(i => !IsNotVisibleOrArchived(i)).OrderBy(i => i.CategoryId);
+            notQuerableCollection = notQuerableCollection.Where(i => !IsNotVisibleOrArchived(i));
             return notQuerableCollection;
         }
 

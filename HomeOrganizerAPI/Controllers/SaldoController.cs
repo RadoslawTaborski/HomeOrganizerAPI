@@ -1,9 +1,11 @@
 ﻿using HomeOrganizerAPI.Models;
 using HomeOrganizerAPI.Repositories;
 using HomeOrganizerAPI.ResourceParameters;
+using HomeOrganizerAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using Dto = HomeOrganizerAPI.Helpers.DTO.User;
+
+using Dto = HomeOrganizerAPI.Helpers.DTO.Saldo;
 
 namespace HomeOrganizerAPI.Controllers
 {
@@ -12,7 +14,7 @@ namespace HomeOrganizerAPI.Controllers
     [ApiController]
     public class SaldoController : BaseController<Saldo, Saldo, Dto>
     {
-        public SaldoController(HomeOrganizerContext context) : base(new SaldoRepository(context))
+        public SaldoController(HomeOrganizerContext context, IPropertyMappingService propertyMappingService) : base(new SaldoRepository(context, propertyMappingService))
         {
         }
 

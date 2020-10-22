@@ -1,14 +1,17 @@
 ﻿using HomeOrganizerAPI.Helpers;
 using HomeOrganizerAPI.Models;
 using HomeOrganizerAPI.ResourceParameters;
+using HomeOrganizerAPI.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
+using Dto = HomeOrganizerAPI.Helpers.DTO.Expenses;
+
 namespace HomeOrganizerAPI.Repositories
 {
-    public class ExpensesRepository : Repository<Expenses, Expenses>
+    public class ExpensesRepository : Repository<Expenses, Expenses, Dto>
     {
-        public ExpensesRepository(HomeOrganizerContext context) : base(context)
+        public ExpensesRepository(HomeOrganizerContext context, IPropertyMappingService propertyMappingService) : base(context, propertyMappingService)
         {
         }
 

@@ -1,6 +1,7 @@
 ﻿using HomeOrganizerAPI.Models;
 using HomeOrganizerAPI.Repositories;
 using HomeOrganizerAPI.ResourceParameters;
+using HomeOrganizerAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Dto = HomeOrganizerAPI.Helpers.DTO.State;
@@ -12,7 +13,7 @@ namespace HomeOrganizerAPI.Controllers
     [ApiController]
     public class StatesController : BaseController<State, State, Dto>
     {
-        public StatesController(HomeOrganizerContext context) : base(new StatesRepository(context))
+        public StatesController(HomeOrganizerContext context, IPropertyMappingService propertyMappingService) : base(new StatesRepository(context, propertyMappingService))
         {
         }
 

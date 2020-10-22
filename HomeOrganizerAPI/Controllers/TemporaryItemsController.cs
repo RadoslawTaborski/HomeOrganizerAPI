@@ -1,6 +1,7 @@
 ﻿using HomeOrganizerAPI.Models;
 using HomeOrganizerAPI.Repositories;
 using HomeOrganizerAPI.ResourceParameters;
+using HomeOrganizerAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Dto = HomeOrganizerAPI.Helpers.DTO.TemporaryItem;
@@ -12,7 +13,7 @@ namespace HomeOrganizerAPI.Controllers
     [ApiController]
     public class TemporaryItemsController : BaseController<Item, TemporaryItem, Dto>
     {
-        public TemporaryItemsController(HomeOrganizerContext context) : base(new TemporaryItemsRepository(context))
+        public TemporaryItemsController(HomeOrganizerContext context, IPropertyMappingService propertyMappingService) : base(new TemporaryItemsRepository(context, propertyMappingService))
         {
         }
 

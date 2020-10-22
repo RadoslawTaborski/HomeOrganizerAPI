@@ -1,14 +1,17 @@
 ﻿using HomeOrganizerAPI.Helpers;
 using HomeOrganizerAPI.Models;
 using HomeOrganizerAPI.ResourceParameters;
+using HomeOrganizerAPI.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
+using Dto = HomeOrganizerAPI.Helpers.DTO.ShoppingList;
+
 namespace HomeOrganizerAPI.Repositories
 {
-    public class ShoppingListsRepository : Repository<ShoppingList, ShoppingList>
+    public class ShoppingListsRepository : Repository<ShoppingList, ShoppingList, Dto>
     {
-        public ShoppingListsRepository(HomeOrganizerContext context) : base(context)
+        public ShoppingListsRepository(HomeOrganizerContext context, IPropertyMappingService propertyMappingService) : base(context, propertyMappingService)
         {
         }
 

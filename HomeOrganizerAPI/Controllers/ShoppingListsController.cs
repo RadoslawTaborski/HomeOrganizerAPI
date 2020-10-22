@@ -1,6 +1,7 @@
 ﻿using HomeOrganizerAPI.Models;
 using HomeOrganizerAPI.Repositories;
 using HomeOrganizerAPI.ResourceParameters;
+using HomeOrganizerAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Dto = HomeOrganizerAPI.Helpers.DTO.ShoppingList;
@@ -12,7 +13,7 @@ namespace HomeOrganizerAPI.Controllers
     [ApiController]
     public class ShoppingListsController : BaseController<ShoppingList, ShoppingList, Dto>
     {
-        public ShoppingListsController(HomeOrganizerContext context) : base(new ShoppingListsRepository(context))
+        public ShoppingListsController(HomeOrganizerContext context, IPropertyMappingService propertyMappingService) : base(new ShoppingListsRepository(context, propertyMappingService))
         {
         }
 

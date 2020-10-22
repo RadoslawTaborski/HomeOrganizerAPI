@@ -1,14 +1,17 @@
 ﻿using HomeOrganizerAPI.Helpers;
 using HomeOrganizerAPI.Models;
 using HomeOrganizerAPI.ResourceParameters;
+using HomeOrganizerAPI.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
+using Dto = HomeOrganizerAPI.Helpers.DTO.Saldo;
+
 namespace HomeOrganizerAPI.Repositories
 {
-    public class SaldoRepository : Repository<Saldo, Saldo>
+    public class SaldoRepository : Repository<Saldo, Saldo, Dto>
     {
-        public SaldoRepository(HomeOrganizerContext context) : base(context)
+        public SaldoRepository(HomeOrganizerContext context, IPropertyMappingService propertyMappingService) : base(context, propertyMappingService)
         {
         }
 

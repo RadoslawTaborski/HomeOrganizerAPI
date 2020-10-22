@@ -1,16 +1,19 @@
 ﻿using HomeOrganizerAPI.Helpers;
 using HomeOrganizerAPI.Models;
 using HomeOrganizerAPI.ResourceParameters;
+using HomeOrganizerAPI.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+using Dto = HomeOrganizerAPI.Helpers.DTO.PermanentItem;
+
 namespace HomeOrganizerAPI.Repositories
 {
-    public class PermanentItemsRepository : Repository<Item, PermanentItem>
+    public class PermanentItemsRepository : Repository<Item, PermanentItem, Dto>
     {
-        public PermanentItemsRepository(HomeOrganizerContext context) : base(context)
+        public PermanentItemsRepository(HomeOrganizerContext context, IPropertyMappingService propertyMappingService) : base(context, propertyMappingService)
         {
         }
 
@@ -47,8 +50,6 @@ namespace HomeOrganizerAPI.Repositories
                 var arg = castedParams.StateId.Trim();
                 collection = collection.Where(i => i.StateId <= int.Parse(arg));
             }
-
-            collection = collection.OrderByDescending(t => t.Counter).ThenBy(t => t.CategoryId);
         }
     }
 }

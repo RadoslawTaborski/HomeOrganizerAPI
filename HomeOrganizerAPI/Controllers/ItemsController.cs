@@ -1,6 +1,8 @@
-﻿using HomeOrganizerAPI.Models;
+﻿using HomeOrganizerAPI.Helpers;
+using HomeOrganizerAPI.Models;
 using HomeOrganizerAPI.Repositories;
 using HomeOrganizerAPI.ResourceParameters;
+using HomeOrganizerAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Dto = HomeOrganizerAPI.Helpers.DTO.Item;
@@ -12,7 +14,7 @@ namespace HomeOrganizerAPI.Controllers
     [ApiController]
     public class ItemsController : BaseController<Item, Item, Dto>
     {
-        public ItemsController(HomeOrganizerContext context) : base(new ItemRepository(context))
+        public ItemsController(HomeOrganizerContext context, IPropertyMappingService propertyMappingService) : base(new ItemRepository(context, propertyMappingService: propertyMappingService))
         {
         }
 
@@ -21,5 +23,5 @@ namespace HomeOrganizerAPI.Controllers
         {
             return await BaseGet(resourceParameters);
         }
-    }
+    } 
 }

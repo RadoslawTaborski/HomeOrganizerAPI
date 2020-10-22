@@ -1,14 +1,17 @@
 ﻿using HomeOrganizerAPI.Helpers;
 using HomeOrganizerAPI.Models;
 using HomeOrganizerAPI.ResourceParameters;
+using HomeOrganizerAPI.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
+using Dto = HomeOrganizerAPI.Helpers.DTO.Category;
+
 namespace HomeOrganizerAPI.Repositories
 {
-    public class CategoryRepository : Repository<Category, Category>
+    public class CategoryRepository : Repository<Category, Category, Dto>
     {
-        public CategoryRepository(HomeOrganizerContext context) : base(context)
+        public CategoryRepository(HomeOrganizerContext context, IPropertyMappingService propertyMappingService) : base(context, propertyMappingService)
         {
         }
 

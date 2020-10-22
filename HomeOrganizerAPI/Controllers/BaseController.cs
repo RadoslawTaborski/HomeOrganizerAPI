@@ -16,10 +16,10 @@ namespace HomeOrganizerAPI.Controllers
         where V : Model
         where DTO : DtoModel
     {
-        private readonly Repository<T, V> _repo;
+        private readonly Repository<T, V, DTO> _repo;
         protected IMapper _mapper;
 
-        public BaseController(Repository<T, V> repository)
+        public BaseController(Repository<T, V, DTO> repository)
         {
             _repo = repository;
             _mapper = AutoMapperConfig.MapperConfiguration.CreateMapper();

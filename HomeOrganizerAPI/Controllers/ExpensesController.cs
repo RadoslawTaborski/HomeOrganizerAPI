@@ -1,8 +1,10 @@
 ﻿using HomeOrganizerAPI.Models;
 using HomeOrganizerAPI.Repositories;
 using HomeOrganizerAPI.ResourceParameters;
+using HomeOrganizerAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+
 using Dto = HomeOrganizerAPI.Helpers.DTO.Expenses;
 
 namespace HomeOrganizerAPI.Controllers
@@ -12,7 +14,7 @@ namespace HomeOrganizerAPI.Controllers
     [ApiController]
     public class ExpensesController : BaseController<Expenses, Expenses, Dto>
     {
-        public ExpensesController(HomeOrganizerContext context) : base(new ExpensesRepository(context))
+        public ExpensesController(HomeOrganizerContext context, IPropertyMappingService propertyMappingService) : base(new ExpensesRepository(context, propertyMappingService))
         {
         }
 

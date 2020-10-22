@@ -1,6 +1,7 @@
 ﻿using HomeOrganizerAPI.Models;
 using HomeOrganizerAPI.Repositories;
 using HomeOrganizerAPI.ResourceParameters;
+using HomeOrganizerAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Dto = HomeOrganizerAPI.Helpers.DTO.Category;
@@ -12,7 +13,7 @@ namespace HomeOrganizerAPI.Controllers
     [ApiController]
     public class CategoriesController : BaseController<Category, Category, Dto>
     {
-        public CategoriesController(HomeOrganizerContext context) : base(new CategoryRepository(context))
+        public CategoriesController(HomeOrganizerContext context, IPropertyMappingService propertyMappingService) : base(new CategoryRepository(context, propertyMappingService))
         {
         }
 

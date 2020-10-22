@@ -1,6 +1,7 @@
 ﻿using HomeOrganizerAPI.Models;
 using HomeOrganizerAPI.Repositories;
 using HomeOrganizerAPI.ResourceParameters;
+using HomeOrganizerAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Dto = HomeOrganizerAPI.Helpers.DTO.User;
@@ -12,7 +13,7 @@ namespace HomeOrganizerAPI.Controllers
     [ApiController]
     public class UsersController : BaseController<User, User, Dto>
     {
-        public UsersController(HomeOrganizerContext context) : base(new UsersRepository(context))
+        public UsersController(HomeOrganizerContext context, IPropertyMappingService propertyMappingService) : base(new UsersRepository(context, propertyMappingService))
         {
         }
 

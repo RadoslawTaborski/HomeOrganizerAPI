@@ -1,13 +1,16 @@
 ﻿using HomeOrganizerAPI.Models;
 using HomeOrganizerAPI.ResourceParameters;
+using HomeOrganizerAPI.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
+using Dto = HomeOrganizerAPI.Helpers.DTO.User;
+
 namespace HomeOrganizerAPI.Repositories
 {
-    public class UsersRepository : Repository<User, User>
+    public class UsersRepository : Repository<User, User, Dto>
     {
-        public UsersRepository(HomeOrganizerContext context) : base(context)
+        public UsersRepository(HomeOrganizerContext context, IPropertyMappingService propertyMappingService) : base(context, propertyMappingService)
         {
         }
 

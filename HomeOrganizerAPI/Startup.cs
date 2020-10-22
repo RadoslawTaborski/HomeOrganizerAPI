@@ -1,5 +1,6 @@
 using HomeOrganizerAPI.Helpers;
 using HomeOrganizerAPI.Models;
+using HomeOrganizerAPI.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -32,6 +33,7 @@ namespace HomeOrganizerAPI
                   .AllowAnyHeader()
                   .AllowCredentials());
             });
+            services.AddTransient<IPropertyMappingService, PropertyMappingService>();
             services.AddDbContext<HomeOrganizerContext>(options => options.UseMySQL(Configuration.GetConnectionString("Database")));
             services.AddControllers();
         }

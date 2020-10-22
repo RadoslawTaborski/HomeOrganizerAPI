@@ -1,5 +1,8 @@
-﻿using HomeOrganizerAPI.Models;
+﻿using HomeOrganizerAPI.Helpers;
+using HomeOrganizerAPI.Helpers.DTO;
+using HomeOrganizerAPI.Models;
 using HomeOrganizerAPI.ResourceParameters;
+using HomeOrganizerAPI.Services;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -8,11 +11,13 @@ using System.Threading.Tasks;
 
 namespace HomeOrganizerAPI.Repositories
 {
-    public abstract class Repository<T, V>
+    public abstract class Repository<T, V, DTO> : IDisposable
         where T : Model
         where V : Model
+        where DTO : DtoModel
     {
         protected readonly HomeOrganizerContext _context;
+        protected readonly IPropertyMappingService _propertyMappingService;
 
         protected abstract DbSet<T> Data { get; }
 
@@ -25,9 +30,10 @@ namespace HomeOrganizerAPI.Repositories
             return await collection.ToListAsync();
         }
 
-        public Repository(HomeOrganizerContext context)
+        public Repository(HomeOrganizerContext context, IPropertyMappingService propertyMappingService)
         {
-            _context = context;
+            this._context = context ?? throw new ArgumentNullException(nameof(context));
+            this._propertyMappingService = propertyMappingService ?? throw new ArgumentNullException(nameof(propertyMappingService));
         }
 
         public async Task<T> Get(int id)
@@ -52,6 +58,12 @@ namespace HomeOrganizerAPI.Repositories
             var collection = Data as IQueryable<T>;
 
             collection = collection.Where(i => !i.DeleteTime.HasValue);
+
+            if (!isNull(parameters.OrderBy))
+            {
+                var propertyMappingDirectory = _propertyMappingService.GetPropertyMapping<DTO, T>();
+                collection = collection.ApplySort(parameters.OrderBy, propertyMappingDirectory);
+            }
 
             CustomGet(ref collection, parameters);
 
@@ -103,6 +115,20 @@ namespace HomeOrganizerAPI.Repositories
         protected bool isNull(string data)
         {
             return string.IsNullOrWhiteSpace(data);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                // dispose resources when needed
+            }
         }
     }
 }

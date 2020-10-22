@@ -12,5 +12,7 @@
             get => PageSize;
             set => PageSize = (value > MaxPageSize) ? MaxPageSize : value;
         }
+
+        public string OrderBy { get; set; } = "id";
     }
 }

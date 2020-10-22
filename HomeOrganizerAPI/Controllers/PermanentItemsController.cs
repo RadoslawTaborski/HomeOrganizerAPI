@@ -1,6 +1,7 @@
 ﻿using HomeOrganizerAPI.Models;
 using HomeOrganizerAPI.Repositories;
 using HomeOrganizerAPI.ResourceParameters;
+using HomeOrganizerAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Dto = HomeOrganizerAPI.Helpers.DTO.PermanentItem;
@@ -12,7 +13,7 @@ namespace HomeOrganizerAPI.Controllers
     [ApiController]
     public class PermanentItemsController : BaseController<Item, PermanentItem, Dto>
     {
-        public PermanentItemsController(HomeOrganizerContext context) : base(new PermanentItemsRepository(context))
+        public PermanentItemsController(HomeOrganizerContext context, IPropertyMappingService propertyMappingService) : base(new PermanentItemsRepository(context, propertyMappingService))
         {
         }
 
