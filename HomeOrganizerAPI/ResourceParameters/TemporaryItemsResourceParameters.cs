@@ -7,5 +7,6 @@
         public string GroupId { get; set; }
         public string CategoryId { get; set; }
         public string SubcategoryId { get; set; }
+        public string ShoppingListId { get; set; }
     }
 }

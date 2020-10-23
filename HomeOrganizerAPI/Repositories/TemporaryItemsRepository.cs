@@ -34,6 +34,11 @@ namespace HomeOrganizerAPI.Repositories
                 collection = Enumerable.Empty<Item>().AsAsyncQueryable();
                 return;
             }
+            if (!isNull(castedParams.ShoppingListId))
+            {
+                var arg = castedParams.ShoppingListId.Trim();
+                collection = collection.Where(i => i.ShoppingListId.ToString() == arg);
+            }
             if (!isNull(castedParams.SubcategoryId))
             {
                 var arg = castedParams.SubcategoryId.Trim();
