@@ -5,15 +5,15 @@ namespace HomeOrganizerAPI.Helpers.DTO
 {
     public record ShoppingItem : DtoModel
     {
-        [JsonConverter(typeof(IntToStringConventer))]
-        public int GroupId { get; set; }
+        [JsonConverter(typeof(GuidToStringConverter))]
+        public byte[] GroupUuid { get; set; }
         public string Name { get; set; }
-        [JsonConverter(typeof(NullableIntToStringConventer))]
-        public int? StateId { get; set; }
-        [JsonConverter(typeof(IntToStringConventer))]
-        public int CategoryId { get; set; }
-        [JsonConverter(typeof(NullableIntToStringConventer))]
-        public int? ShoppingListId { get; set; }
+        [JsonConverter(typeof(GuidToStringConverter))]
+        public byte[] StateUuid { get; set; }
+        [JsonConverter(typeof(GuidToStringConverter))]
+        public byte[] CategoryUuid { get; set; }
+        [JsonConverter(typeof(GuidToStringConverter))]
+        public byte[] ShoppingListUuid { get; set; }
         public string Quantity { get; set; }
         public DateTimeOffset? Bought { get; set; }
         public bool? Visible { get; set; }

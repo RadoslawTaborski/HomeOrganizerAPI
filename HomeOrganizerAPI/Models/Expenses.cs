@@ -5,14 +5,15 @@ namespace HomeOrganizerAPI.Models
 {
     public partial record Expenses : Model
     {
-        public int GroupId { get; set; }
+        public Expenses()
+        {
+            ExpenseDetails = new HashSet<ExpenseDetails>();
+        }
+
+        public byte[] GroupUuid { get; set; }
         public string Name { get; set; }
-        public decimal Value { get; set; }
-        public int PayerId { get; set; }
-        public int RecipientId { get; set; }
 
         public virtual Group Group { get; set; }
-        public virtual User Payer { get; set; }
-        public virtual User Recipient { get; set; }
+        public virtual ICollection<ExpenseDetails> ExpenseDetails { get; set; }
     }
 }

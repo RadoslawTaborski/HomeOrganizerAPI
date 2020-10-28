@@ -3,6 +3,7 @@ using HomeOrganizerAPI.Models;
 using HomeOrganizerAPI.ResourceParameters;
 using HomeOrganizerAPI.Services;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 
 using Dto = HomeOrganizerAPI.Helpers.DTO.Subcategory;
@@ -21,16 +22,21 @@ namespace HomeOrganizerAPI.Repositories
 
         protected override void CustomGet(ref IQueryable<Subcategory> collection, Parameters parameters)
         {
-            var castedParams = parameters as DefaultParameters;
-            if (!isNull(castedParams.GroupId))
+            var castedParams = parameters as SubcategoryResourceParameters;
+            if (!isNull(castedParams.GroupUuid))
             {
-                var arg = castedParams.GroupId.Trim();
-                collection = collection.Where(i => i.GroupId.ToString() == arg);
+                var arg = castedParams.GroupUuid.Trim();
+                collection = collection.Where(i => Guid.Parse(arg).ToByteArray() == i.GroupUuid);
             }
             else
             {
                 collection = Enumerable.Empty<Subcategory>().AsAsyncQueryable();
                 return;
+            }
+            if (!isNull(castedParams.CategoryUuid))
+            {
+                var arg = castedParams.CategoryUuid.Trim();
+                collection = collection.Where(i => Guid.Parse(arg).ToByteArray() == i.CategoryUuid);
             }
         }
     }

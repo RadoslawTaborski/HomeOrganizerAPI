@@ -4,13 +4,13 @@ namespace HomeOrganizerAPI.Helpers.DTO
 {
     public record PermanentItem : DtoModel
     {
-        [JsonConverter(typeof(IntToStringConventer))]
-        public int GroupId { get; set; }
+        [JsonConverter(typeof(GuidToStringConverter))]
+        public byte[] GroupUuid { get; set; }
         public string Name { get; set; }
-        [JsonConverter(typeof(NullableIntToStringConventer))]
-        public int? StateId { get; set; }
-        [JsonConverter(typeof(IntToStringConventer))]
-        public int CategoryId { get; set; }
+        [JsonConverter(typeof(GuidToStringConverter))]
+        public byte[] StateUuid { get; set; }
+        [JsonConverter(typeof(GuidToStringConverter))]
+        public byte[] CategoryUuid { get; set; }
         public long Counter { get; set; }
     }
 }

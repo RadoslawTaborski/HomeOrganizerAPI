@@ -6,8 +6,8 @@ namespace HomeOrganizerAPI.Helpers.DTO
 {
     public record DtoModel : IModel
     {
-        [JsonConverter(typeof(NullableIntToStringConventer))]
-        public int? Id { get; set; }
+        [JsonConverter(typeof(GuidToStringConverter))]
+        public byte[] Uuid { get; set; }
         public DateTimeOffset CreateTime { get; set; }
         public DateTimeOffset? UpdateTime { get; set; }
         public DateTimeOffset? DeleteTime { get; set; }

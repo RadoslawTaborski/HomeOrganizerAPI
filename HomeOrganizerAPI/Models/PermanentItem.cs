@@ -5,9 +5,10 @@ namespace HomeOrganizerAPI.Models
 {
     public partial record PermanentItem : Model
     {
-        public int GroupId { get; set; }
+        public byte[] GroupUuid { get; set; }
         public string Name { get; set; }
-        public int? StateId { get; set; }
-        public int CategoryId { get; set; }
+        public byte[] StateUuid { get; set; }
+        public byte[] CategoryUuid { get; set; }
+        public long Counter { get; set; }
     }
 }

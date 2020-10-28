@@ -6,6 +6,7 @@ using HomeOrganizerAPI.Repositories;
 using HomeOrganizerAPI.ResourceParameters;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -33,9 +34,10 @@ namespace HomeOrganizerAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<DTO>> BaseGet(int id)
+        public async Task<ActionResult<DTO>> BaseGet(string id)
         {
-            var entity = await _repo.Get(id);
+            var byteUuid = Guid.Parse(id).ToByteArray();
+            var entity = await _repo.Get(byteUuid);
             if (entity == null)
             {
                 return NotFound();
@@ -49,7 +51,7 @@ namespace HomeOrganizerAPI.Controllers
         {
             var added = await _repo.Add(FromDto(value));
 
-            return CreatedAtAction(nameof(BaseGet), new { id = added.Id, version = "v1" }, added);
+            return CreatedAtAction(nameof(BaseGet), new { uuid = new Guid(added.Uuid).ToString(), version = "v1" }, added);
         }
 
         [HttpPut]
@@ -58,11 +60,11 @@ namespace HomeOrganizerAPI.Controllers
             try
             {
                 var added = await _repo.Update(FromDto(value));
-                return CreatedAtAction(nameof(BaseGet), new { id = added.Id, version = "v1" }, added);
+                return CreatedAtAction(nameof(BaseGet), new { uuid = new Guid(added.Uuid).ToString(), version = "v1" }, added);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!await _repo.Exists(value.Id))
+                if (!await _repo.Exists(value.Uuid))
                 {
                     return NotFound();
                 }
@@ -74,9 +76,10 @@ namespace HomeOrganizerAPI.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<DTO>> BaseDelete(int id)
+        public async Task<ActionResult<DTO>> BaseDelete(string id)
         {
-            var deleted = await _repo.DeleteItem(id);
+            var byteUuid = Guid.Parse(id).ToByteArray();
+            var deleted = await _repo.DeleteItem(byteUuid);
             if (deleted)
             {
                 return Ok();

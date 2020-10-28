@@ -36,7 +36,7 @@ namespace HomeOrganizerAPI.Repositories
             this._propertyMappingService = propertyMappingService ?? throw new ArgumentNullException(nameof(propertyMappingService));
         }
 
-        public async Task<T> Get(int id)
+        public async Task<T> Get(byte[] id)
         {
             return await Data.FindAsync(id);
         }
@@ -76,6 +76,7 @@ namespace HomeOrganizerAPI.Repositories
         public async Task<T> Add(T element)
         {
             element.CreateTime = DateTimeOffset.Now;
+            element.Uuid = Guid.NewGuid().ToByteArray();
             Data.Add(element);
             await _context.SaveChangesAsync();
 
@@ -91,7 +92,7 @@ namespace HomeOrganizerAPI.Repositories
             return element;
         }
 
-        public async Task<bool> DeleteItem(int id)
+        public async Task<bool> DeleteItem(byte[] id)
         {
             var entity = await Data.FindAsync(id);
             if (entity == null)
@@ -106,9 +107,9 @@ namespace HomeOrganizerAPI.Repositories
             return true;
         }
 
-        public async Task<bool> Exists(int? id)
+        public async Task<bool> Exists(byte[] uuid)
         {
-            var entity = await Data.FindAsync(id);
+            var entity = await Data.FindAsync(uuid);
             return entity != null;
         }
 

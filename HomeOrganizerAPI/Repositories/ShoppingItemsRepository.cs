@@ -3,6 +3,7 @@ using HomeOrganizerAPI.Models;
 using HomeOrganizerAPI.ResourceParameters;
 using HomeOrganizerAPI.Services;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -24,27 +25,27 @@ namespace HomeOrganizerAPI.Repositories
         {
             collection = collection.Where(i => !i.Bought.HasValue);
             var castedParams = parameters as ItemsResourceParameters;
-            if (!isNull(castedParams.GroupId))
+            if (!isNull(castedParams.GroupUuid))
             {
-                var arg = castedParams.GroupId.Trim();
-                collection = collection.Where(i => i.GroupId.ToString() == arg);
+                var arg = castedParams.GroupUuid.Trim();
+                collection = collection.Where(i => Guid.Parse(arg).ToByteArray() == i.GroupUuid);
             }
             else
             {
                 collection = Enumerable.Empty<Item>().AsAsyncQueryable();
                 return;
             }
-            if (!isNull(castedParams.SubcategoryId))
+            if (!isNull(castedParams.SubcategoryUuid))
             {
-                var arg = castedParams.SubcategoryId.Trim();
-                collection = collection.Where(i => i.CategoryId.ToString() == arg);
+                var arg = castedParams.SubcategoryUuid.Trim();
+                collection = collection.Where(i => Guid.Parse(arg).ToByteArray() == i.CategoryUuid);
             }
-            else if (!isNull(castedParams.CategoryId))
+            else if (!isNull(castedParams.CategoryUuid))
             {
-                var arg = castedParams.CategoryId.Trim();
-                collection = collection.Where(i => i.Category.CategoryId.ToString() == arg);
+                var arg = castedParams.CategoryUuid.Trim();
+                collection = collection.Where(i => Guid.Parse(arg).ToByteArray() == i.Category.CategoryUuid);
             }
-            collection = collection.Where(i => i.StateId <= castedParams.StateId || i.StateId == null);
+            collection = collection.Where(i => i.State.Level <= castedParams.StateLevel || i.StateUuid == null);
         }
 
 
@@ -57,14 +58,14 @@ namespace HomeOrganizerAPI.Repositories
 
         private bool IsNotVisibleOrArchived(Item i)
         {
-            if (i.ShoppingListId == null)
+            if (i.ShoppingListUuid == null)
             {
                 return false;
             }
             else
             {
                 var collection = _context.ShoppingList as IQueryable<ShoppingList>;
-                var list = collection.Where(l => l.Id == i.ShoppingListId).FirstOrDefault();
+                var list = collection.Where(l => l.Uuid == i.ShoppingListUuid).FirstOrDefault();
                 if (list.DeleteTime.HasValue)
                 {
                     return true;

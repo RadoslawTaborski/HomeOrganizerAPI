@@ -5,9 +5,9 @@ namespace HomeOrganizerAPI.Models
 {
     public partial record ExpensesSettings : Model
     {
-        public int User1Id { get; set; }
-        public int User2Id { get; set; }
-        public int GroupId { get; set; }
+        public byte[] User1Uuid { get; set; }
+        public byte[] User2Uuid { get; set; }
+        public byte[] GroupUuid { get; set; }
         public float Value { get; set; }
 
         public virtual Group Group { get; set; }

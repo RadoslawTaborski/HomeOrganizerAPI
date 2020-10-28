@@ -3,6 +3,7 @@ using HomeOrganizerAPI.Models;
 using HomeOrganizerAPI.ResourceParameters;
 using HomeOrganizerAPI.Services;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 
 using Dto = HomeOrganizerAPI.Helpers.DTO.Expenses;
@@ -22,10 +23,10 @@ namespace HomeOrganizerAPI.Repositories
         protected override void CustomGet(ref IQueryable<Expenses> collection, Parameters parameters)
         {
             var castedParams = parameters as DefaultParameters;
-            if (!isNull(castedParams.GroupId))
+            if (!isNull(castedParams.GroupUuid))
             {
-                var arg = castedParams.GroupId.Trim();
-                collection = collection.Where(i => i.GroupId.ToString() == arg);
+                var arg = castedParams.GroupUuid.Trim();
+                collection = collection.Where(i => Guid.Parse(arg).ToByteArray() == i.GroupUuid);
             }
             else
             {

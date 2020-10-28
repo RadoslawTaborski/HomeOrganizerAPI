@@ -4,10 +4,10 @@ namespace HomeOrganizerAPI.Helpers.DTO
 {
     public record Subcategory : DtoModel
     {
-        [JsonConverter(typeof(IntToStringConventer))]
-        public int GroupId { get; set; }
+        [JsonConverter(typeof(GuidToStringConverter))]
+        public byte[] GroupUuid { get; set; }
         public string Name { get; set; }
-        [JsonConverter(typeof(IntToStringConventer))]
-        public int CategoryId { get; set; }
+        [JsonConverter(typeof(GuidToStringConverter))]
+        public byte[] CategoryUuid { get; set; }
     }
 }

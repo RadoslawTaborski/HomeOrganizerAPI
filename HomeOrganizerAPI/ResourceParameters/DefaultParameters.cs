@@ -5,6 +5,6 @@
         public override int MaxPageSize { get; set; } = 50;
         protected override int PageSize { get; set; } = 50;
 
-        public string GroupId { get; set; }
+        public string GroupUuid { get; set; }
     }
 }

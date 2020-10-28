@@ -3,6 +3,7 @@ using HomeOrganizerAPI.Models;
 using HomeOrganizerAPI.ResourceParameters;
 using HomeOrganizerAPI.Services;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -22,32 +23,32 @@ namespace HomeOrganizerAPI.Repositories
         protected override DbSet<TemporaryItem> DataView => _context.TemporaryItem;
         protected override void CustomGet(ref IQueryable<Item> collection, Parameters parameters)
         {
-            collection = collection.Where(i => i.ShoppingListId != null);
+            collection = collection.Where(i => i.ShoppingListUuid != null);
             var castedParams = parameters as TemporaryItemsResourceParameters;
-            if (!isNull(castedParams.GroupId))
+            if (!isNull(castedParams.GroupUuid))
             {
-                var arg = castedParams.GroupId.Trim();
-                collection = collection.Where(i => i.GroupId.ToString() == arg);
+                var arg = castedParams.GroupUuid.Trim();
+                collection = collection.Where(i => Guid.Parse(arg).ToByteArray() == i.GroupUuid);
             }
             else
             {
                 collection = Enumerable.Empty<Item>().AsAsyncQueryable();
                 return;
             }
-            if (!isNull(castedParams.ShoppingListId))
+            if (!isNull(castedParams.ShoppingListUuid))
             {
-                var arg = castedParams.ShoppingListId.Trim();
-                collection = collection.Where(i => i.ShoppingListId.ToString() == arg);
+                var arg = castedParams.ShoppingListUuid.Trim();
+                collection = collection.Where(i => Guid.Parse(arg).ToByteArray() == i.ShoppingListUuid);
             }
-            if (!isNull(castedParams.SubcategoryId))
+            if (!isNull(castedParams.SubcategoryUuid))
             {
-                var arg = castedParams.SubcategoryId.Trim();
-                collection = collection.Where(i => i.CategoryId.ToString() == arg);
+                var arg = castedParams.SubcategoryUuid.Trim();
+                collection = collection.Where(i => Guid.Parse(arg).ToByteArray() == i.CategoryUuid);
             }
-            else if (!isNull(castedParams.CategoryId))
+            else if (!isNull(castedParams.CategoryUuid))
             {
-                var arg = castedParams.CategoryId.Trim();
-                collection = collection.Where(i => i.Category.CategoryId.ToString() == arg);
+                var arg = castedParams.CategoryUuid.Trim();
+                collection = collection.Where(i => Guid.Parse(arg).ToByteArray() == i.Category.CategoryUuid);
             }
         }
     }

@@ -10,7 +10,7 @@ namespace HomeOrganizerAPI.Models
             Subcategory = new HashSet<Subcategory>();
         }
 
-        public int GroupId { get; set; }
+        public byte[] GroupUuid { get; set; }
         public string Name { get; set; }
 
         public virtual Group Group { get; set; }

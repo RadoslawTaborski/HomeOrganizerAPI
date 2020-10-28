@@ -4,12 +4,12 @@ namespace HomeOrganizerAPI.Helpers.DTO
 {
     public record Saldo : DtoModel
     {
-        [JsonConverter(typeof(IntToStringConventer))]
-        public int GroupId { get; set; }
-        [JsonConverter(typeof(IntToStringConventer))]
-        public int PayerId { get; set; }
-        [JsonConverter(typeof(IntToStringConventer))]
-        public int RecipientId { get; set; }
+        [JsonConverter(typeof(GuidToStringConverter))]
+        public byte[] GroupUuid { get; set; }
+        [JsonConverter(typeof(GuidToStringConverter))]
+        public byte[] PayerUuid { get; set; }
+        [JsonConverter(typeof(GuidToStringConverter))]
+        public byte[] RecipientUuid { get; set; }
         public decimal Value { get; set; }
     }
 }

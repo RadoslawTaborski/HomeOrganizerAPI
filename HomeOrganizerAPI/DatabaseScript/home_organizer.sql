@@ -24,12 +24,12 @@ USE `home_organizer` ;
 DROP TABLE IF EXISTS `home_organizer`.`group` ;
 
 CREATE TABLE IF NOT EXISTS `home_organizer`.`group` (
-  `id` INT NOT NULL AUTO_INCREMENT,
+  `uuid` BINARY(16) NOT NULL UNIQUE,
   `name` VARCHAR(100) NOT NULL,
   `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` TIMESTAMP NULL,
   `delete_time` TIMESTAMP NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`uuid`)
 ) ENGINE = InnoDB;
 
 
@@ -39,21 +39,20 @@ CREATE TABLE IF NOT EXISTS `home_organizer`.`group` (
 DROP TABLE IF EXISTS `home_organizer`.`category` ;
 
 CREATE TABLE IF NOT EXISTS `home_organizer`.`category` (
-  `id` INT(11) NOT NULL AUTO_INCREMENT,
-  `group_id` INT NOT NULL,
+  `uuid` BINARY(16) NOT NULL UNIQUE,
+  `group_uuid` BINARY(16) NOT NULL,
   `name` VARCHAR(60) NOT NULL,
   `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` TIMESTAMP NULL DEFAULT NULL,
   `delete_time` TIMESTAMP NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `fk_category_group1_idx` (`group_id`)
+  PRIMARY KEY (`uuid`),
+  KEY `fk_category_group1_idx` (`group_uuid`)
 )ENGINE = InnoDB
-AUTO_INCREMENT = 6
 DEFAULT CHARACTER SET = utf8
 COLLATE = utf8_polish_ci;
 
 ALTER TABLE `home_organizer`.`category`
-ADD CONSTRAINT `fk_category_group1` FOREIGN KEY (`group_id`) REFERENCES `home_organizer`.`group` (`id`);
+ADD CONSTRAINT `fk_category_group1` FOREIGN KEY (`group_uuid`) REFERENCES `home_organizer`.`group` (`uuid`);
 
 -- -----------------------------------------------------
 -- Table `home_organizer`.`user`
@@ -61,19 +60,17 @@ ADD CONSTRAINT `fk_category_group1` FOREIGN KEY (`group_id`) REFERENCES `home_or
 DROP TABLE IF EXISTS `home_organizer`.`user` ;
 
 CREATE TABLE IF NOT EXISTS `home_organizer`.`user` (
-  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `uuid` BINARY(16) NOT NULL UNIQUE,
   `username` VARCHAR(16) NOT NULL,
   `email` VARCHAR(255) NULL DEFAULT NULL,
   `password` VARCHAR(32) NOT NULL,
   `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` TIMESTAMP NULL DEFAULT NULL,
   `delete_time` TIMESTAMP NULL DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`uuid`)
 ) ENGINE = InnoDB
-AUTO_INCREMENT = 3
 DEFAULT CHARACTER SET = utf8
 COLLATE = utf8_polish_ci;
-
 
 -- -----------------------------------------------------
 -- Table `home_organizer`.`expenses`
@@ -81,52 +78,73 @@ COLLATE = utf8_polish_ci;
 DROP TABLE IF EXISTS `home_organizer`.`expenses` ;
 
 CREATE TABLE IF NOT EXISTS `home_organizer`.`expenses` (
-  `id` INT(11) NOT NULL AUTO_INCREMENT,
-  `group_id` INT NOT NULL,
+  `uuid` BINARY(16) NOT NULL UNIQUE,
+  `group_uuid` BINARY(16) NOT NULL,
   `name` VARCHAR(60) NOT NULL,
-  `value` DECIMAL(10,0) NOT NULL,
-  `payer_id` INT(11) NOT NULL,
-  `recipient_id` INT(11) NOT NULL,
   `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` TIMESTAMP NULL DEFAULT NULL,
   `delete_time` TIMESTAMP NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `fk_expenses_user1_idx` (`payer_id`),
-  KEY `fk_expenses_user2_idx` (`recipient_id`),
-  KEY `fk_expenses_group1_idx` (`group_id`)
+  PRIMARY KEY (`uuid`),
+  KEY `fk_expenses_group1_idx` (`group_uuid`)
 ) ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8
 COLLATE = utf8_polish_ci;
 
 ALTER TABLE `home_organizer`.`expenses`
-ADD CONSTRAINT `fk_expenses_group1` FOREIGN KEY (`group_id`) REFERENCES `home_organizer`.`group` (`id`),
-ADD CONSTRAINT `fk_expenses_user1` FOREIGN KEY (`payer_id`) REFERENCES `home_organizer`.`user` (`id`),
-ADD CONSTRAINT `fk_expenses_user2` FOREIGN KEY (`recipient_id`) REFERENCES `home_organizer`.`user` (`id`);
+ADD CONSTRAINT `fk_expenses_group1` FOREIGN KEY (`group_uuid`) REFERENCES `home_organizer`.`group` (`uuid`);
+
+-- -----------------------------------------------------
+-- Table `home_organizer`.`expense_details`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `home_organizer`.`expense_details` ;
+
+CREATE TABLE IF NOT EXISTS `home_organizer`.`expense_details` (
+  `uuid` BINARY(16) NOT NULL UNIQUE,
+  `expense_uuid` BINARY(16) NOT NULL,
+  `value` DECIMAL(10,3) NOT NULL,
+  `payer_uuid` BINARY(16) NOT NULL,
+  `recipient_uuid` BINARY(16) NOT NULL,
+  `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `update_time` TIMESTAMP NULL DEFAULT NULL,
+  `delete_time` TIMESTAMP NULL DEFAULT NULL,
+  PRIMARY KEY (`uuid`),
+  KEY `fk_expense_details_user1_idx` (`recipient_uuid`),
+  KEY `fk_expense_details_user2_idx` (`payer_uuid`),
+  KEY `fk_expense_details_expenses1_idx` (`expense_uuid`)
+) ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_polish_ci;
+
+ALTER TABLE `home_organizer`.`expense_details`
+ADD CONSTRAINT `fk_expense_details_expenses1` FOREIGN KEY (`expense_uuid`) REFERENCES `home_organizer`.`expenses` (`uuid`),
+ADD CONSTRAINT `fk_expense_details_user1` FOREIGN KEY (`recipient_uuid`) REFERENCES `home_organizer`.`user` (`uuid`),
+ADD CONSTRAINT `fk_expense_details_user2` FOREIGN KEY (`payer_uuid`) REFERENCES `home_organizer`.`user` (`uuid`);
 -- -----------------------------------------------------
 -- Table `home_organizer`.`expenses_settings`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `home_organizer`.`expenses_settings` ;
 
 CREATE TABLE IF NOT EXISTS `home_organizer`.`expenses_settings` (
-  `user1_id` INT(11) NOT NULL,
-  `user2_id` INT(11) NOT NULL,
-  `group_id` INT NOT NULL,
+  `user1_uuid` BINARY(16) NOT NULL,
+  `user2_uuid` BINARY(16) NOT NULL,
+  `group_uuid` BINARY(16) NOT NULL,
   `value` FLOAT NOT NULL,
   `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` TIMESTAMP NULL DEFAULT NULL,
   `delete_time` TIMESTAMP NULL DEFAULT NULL,
-  PRIMARY KEY (`user1_id`, `user2_id`),
-  KEY `fk_expenses_settings_user1_idx` (`user1_id`),
-  KEY `fk_expenses_settings_user2_idx` (`user2_id`),
-  KEY `fk_expenses_settings_group1_idx` (`group_id`)
+  PRIMARY KEY (`user1_uuid`, `user2_uuid`),
+  KEY `fk_expenses_settings_user1_idx` (`user1_uuid`),
+  KEY `fk_expenses_settings_user2_idx` (`user2_uuid`),
+  KEY `fk_expenses_settings_group1_idx` (`group_uuid`),
+  UNIQUE(user1_uuid,user2_uuid)
 ) ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8
 COLLATE = utf8_polish_ci;
 
 ALTER TABLE `home_organizer`.`expenses_settings`
-ADD CONSTRAINT `fk_expenses_settings_group1` FOREIGN KEY (`group_id`) REFERENCES `home_organizer`.`group` (`id`),
-ADD CONSTRAINT `fk_expenses_settings_user1` FOREIGN KEY (`user1_id`) REFERENCES `home_organizer`.`user` (`id`),
-ADD CONSTRAINT `fk_expenses_settings_user2` FOREIGN KEY (`user2_id`) REFERENCES `home_organizer`.`user` (`id`);
+ADD CONSTRAINT `fk_expenses_settings_group1` FOREIGN KEY (`group_uuid`) REFERENCES `home_organizer`.`group` (`uuid`),
+ADD CONSTRAINT `fk_expenses_settings_user1` FOREIGN KEY (`user1_uuid`) REFERENCES `home_organizer`.`user` (`uuid`),
+ADD CONSTRAINT `fk_expenses_settings_user2` FOREIGN KEY (`user2_uuid`) REFERENCES `home_organizer`.`user` (`uuid`);
 
 -- -----------------------------------------------------
 -- Table `home_organizer`.`shopping_list`
@@ -134,36 +152,36 @@ ADD CONSTRAINT `fk_expenses_settings_user2` FOREIGN KEY (`user2_id`) REFERENCES 
 DROP TABLE IF EXISTS `home_organizer`.`shopping_list` ;
 
 CREATE TABLE IF NOT EXISTS `home_organizer`.`shopping_list` (
-  `id` INT(11) NOT NULL AUTO_INCREMENT,
-  `group_id` INT NOT NULL,
+  `uuid` BINARY(16) NOT NULL UNIQUE,
+  `group_uuid` BINARY(16) NOT NULL,
   `name` VARCHAR(60) NOT NULL,
   `description` VARCHAR(200) NOT NULL,
   `visible` TINYINT(1) NOT NULL,
   `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` TIMESTAMP NULL DEFAULT NULL,
   `delete_time` TIMESTAMP NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `fk_shopping_list_group1_idx` (`group_id`)
+  PRIMARY KEY (`uuid`),
+  KEY `fk_shopping_list_group1_idx` (`group_uuid`)
 )ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8
 COLLATE = utf8_polish_ci;
 
 ALTER TABLE `home_organizer`.`shopping_list`
-ADD CONSTRAINT `fk_shopping_list_group1` FOREIGN KEY (`group_id`) REFERENCES `home_organizer`.`group` (`id`);
+ADD CONSTRAINT `fk_shopping_list_group1` FOREIGN KEY (`group_uuid`) REFERENCES `home_organizer`.`group` (`uuid`);
 -- -----------------------------------------------------
 -- Table `home_organizer`.`state`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `home_organizer`.`state` ;
 
 CREATE TABLE IF NOT EXISTS `home_organizer`.`state` (
-  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `uuid` BINARY(16) NOT NULL UNIQUE,
+  `level` INT(11) NOT NULL UNIQUE DEFAULT 0,
   `name` VARCHAR(60) NULL DEFAULT NULL,
   `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` TIMESTAMP NULL DEFAULT NULL,
   `delete_time` TIMESTAMP NULL DEFAULT NULL,
-  PRIMARY KEY (`id`))
+  PRIMARY KEY (`uuid`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 5
 DEFAULT CHARACTER SET = utf8
 COLLATE = utf8_polish_ci;
 
@@ -174,99 +192,97 @@ COLLATE = utf8_polish_ci;
 DROP TABLE IF EXISTS `home_organizer`.`subcategory` ;
 
 CREATE TABLE IF NOT EXISTS `home_organizer`.`subcategory` (
-  `id` INT(11) NOT NULL AUTO_INCREMENT,
-  `group_id` INT NOT NULL,
+  `uuid` BINARY(16) NOT NULL UNIQUE,
+  `group_uuid` BINARY(16) NOT NULL,
   `name` VARCHAR(60) NOT NULL,
-  `category_id` INT(11) NOT NULL,
+  `category_uuid` BINARY(16) NOT NULL,
   `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` TIMESTAMP NULL DEFAULT NULL,
   `delete_time` TIMESTAMP NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `fk_subcategory_group1_idx` (`group_id`),
-  KEY `fk_subcategory_category1_idx` (`category_id`)
+  PRIMARY KEY (`uuid`),
+  KEY `fk_subcategory_group1_idx` (`group_uuid`),
+  KEY `fk_subcategory_category1_idx` (`category_uuid`)
 ) ENGINE = InnoDB
-AUTO_INCREMENT = 22
 DEFAULT CHARACTER SET = utf8
 COLLATE = utf8_polish_ci;
 
 ALTER TABLE `home_organizer`.`subcategory`
-ADD CONSTRAINT `fk_subcategory_group1` FOREIGN KEY (`group_id`) REFERENCES `home_organizer`.`group` (`id`),
-ADD CONSTRAINT `fk_subcategory_category1` FOREIGN KEY (`category_id`) REFERENCES `home_organizer`.`category` (`id`);
+ADD CONSTRAINT `fk_subcategory_group1` FOREIGN KEY (`group_uuid`) REFERENCES `home_organizer`.`group` (`uuid`),
+ADD CONSTRAINT `fk_subcategory_category1` FOREIGN KEY (`category_uuid`) REFERENCES `home_organizer`.`category` (`uuid`);
 -- -----------------------------------------------------
 -- Table `home_organizer`.`item`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `home_organizer`.`item` ;
 
 CREATE TABLE IF NOT EXISTS `home_organizer`.`item` (
-  `id` INT(11) NOT NULL AUTO_INCREMENT,
-  `group_id` INT NOT NULL,
+  `uuid` BINARY(16) NOT NULL UNIQUE,
+  `group_uuid` BINARY(16) NOT NULL,
   `name` VARCHAR(60) NOT NULL,
-  `state_id` INT(11) NULL DEFAULT NULL,
+  `state_uuid` BINARY(16) NULL DEFAULT NULL,
   `quantity` VARCHAR(60) NULL DEFAULT NULL,
-  `category_id` INT(11) NOT NULL,
+  `category_uuid` BINARY(16) NOT NULL,
   `bought` TIMESTAMP NULL DEFAULT NULL,
-  `shopping_list_id` INT(11) NULL DEFAULT NULL,
+  `shopping_list_uuid` BINARY(16) NULL DEFAULT NULL,
   `counter` BIGINT NOT NULL DEFAULT 0,
   `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` TIMESTAMP NULL DEFAULT NULL,
   `delete_time` TIMESTAMP NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `fk_item_group1_idx` (`group_id`),
-  KEY `fk_item_subcategory1_idx` (`category_id`),
-  KEY `fk_item_state1_idx` (`state_id`),
-  KEY `fk_item_shopping_list1_idx` (`shopping_list_id`)
+  PRIMARY KEY (`uuid`),
+  KEY `fk_item_group1_idx` (`group_uuid`),
+  KEY `fk_item_subcategory1_idx` (`category_uuid`),
+  KEY `fk_item_state1_idx` (`state_uuid`),
+  KEY `fk_item_shopping_list1_idx` (`shopping_list_uuid`)
 ) ENGINE = InnoDB
-AUTO_INCREMENT = 58
 DEFAULT CHARACTER SET = utf8
 COLLATE = utf8_polish_ci;
 
 ALTER TABLE `home_organizer`.`item`
-ADD CONSTRAINT `fk_item_group1` FOREIGN KEY (`group_id`) REFERENCES `home_organizer`.`group` (`id`),
-ADD CONSTRAINT `fk_item_subcategory1` FOREIGN KEY (`category_id`) REFERENCES `home_organizer`.`subcategory` (`id`),
-ADD CONSTRAINT `fk_item_state1` FOREIGN KEY (`state_id`) REFERENCES `home_organizer`.`state` (`id`),
-ADD CONSTRAINT `fk_item_shopping_list1` FOREIGN KEY (`shopping_list_id`) REFERENCES `home_organizer`.`shopping_list` (`id`);
+ADD CONSTRAINT `fk_item_group1` FOREIGN KEY (`group_uuid`) REFERENCES `home_organizer`.`group` (`uuid`),
+ADD CONSTRAINT `fk_item_subcategory1` FOREIGN KEY (`category_uuid`) REFERENCES `home_organizer`.`subcategory` (`uuid`),
+ADD CONSTRAINT `fk_item_state1` FOREIGN KEY (`state_uuid`) REFERENCES `home_organizer`.`state` (`uuid`),
+ADD CONSTRAINT `fk_item_shopping_list1` FOREIGN KEY (`shopping_list_uuid`) REFERENCES `home_organizer`.`shopping_list` (`uuid`);
 -- -----------------------------------------------------
 -- Table `home_organizer`.`user_groups`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `home_organizer`.`user_groups` ;
 
 CREATE TABLE IF NOT EXISTS `home_organizer`.`user_groups` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `user_id` INT(11) NOT NULL,
-  `group_id` INT NOT NULL,
+  `uuid` BINARY(16) NOT NULL UNIQUE,
+  `user_uuid` BINARY(16) NOT NULL,
+  `group_uuid` BINARY(16) NOT NULL,
   `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` TIMESTAMP NULL,
   `delete_time` TIMESTAMP NULL,
-  PRIMARY KEY (`id`),
-  KEY `fk_user_groups_group1_idx` (`group_id`),
-  KEY `fk_user_groups_user1_idx` (`user_id`)
+  PRIMARY KEY (`uuid`),
+  KEY `fk_user_groups_group1_idx` (`group_uuid`),
+  KEY `fk_user_groups_user1_idx` (`user_uuid`)
 ) ENGINE = InnoDB;
 
 ALTER TABLE `home_organizer`.`user_groups`
-ADD CONSTRAINT `fk_user_groups_group1` FOREIGN KEY (`group_id`) REFERENCES `home_organizer`.`group` (`id`),
-ADD CONSTRAINT `fk_user_groups_user1` FOREIGN KEY (`user_id`) REFERENCES `home_organizer`.`user` (`id`);
+ADD CONSTRAINT `fk_user_groups_group1` FOREIGN KEY (`group_uuid`) REFERENCES `home_organizer`.`group` (`uuid`),
+ADD CONSTRAINT `fk_user_groups_user1` FOREIGN KEY (`user_uuid`) REFERENCES `home_organizer`.`user` (`uuid`);
 
 USE `home_organizer` ;
 
 -- -----------------------------------------------------
 -- Placeholder table for view `home_organizer`.`permanent_item`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `home_organizer`.`permanent_item` (`id` INT, `group_id` INT, `name` INT, `state_id` INT, `category_id` INT, `counter` BIGINT, `create_time` INT, `update_time` INT, `delete_time` INT);
+CREATE TABLE IF NOT EXISTS `home_organizer`.`permanent_item` (`uuid` INT, `group_uuid` INT, `name` INT, `state_uuid` INT, `category_uuid` INT, `counter` BIGINT, `create_time` INT, `update_time` INT, `delete_time` INT);
 
 -- -----------------------------------------------------
 -- Placeholder table for view `home_organizer`.`saldo`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `home_organizer`.`saldo` (`payer_id` INT, `group_id` INT, `recipient_id` INT, `value` INT);
+CREATE TABLE IF NOT EXISTS `home_organizer`.`saldo` (`payer_uuid` INT, `group_uuid` INT, `recipient_uuid` INT, `value` INT);
 
 -- -----------------------------------------------------
 -- Placeholder table for view `home_organizer`.`shopping_item`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `home_organizer`.`shopping_item` (`id` INT, `group_id` INT, `name` INT, `shopping_list_id` INT, `state_id` INT, `counter` BIGINT, `quantity` INT, `category_id` INT, `bought` INT, `create_time` INT, `update_time` INT, `delete_time` INT, `visible` INT, `archived` INT);
+CREATE TABLE IF NOT EXISTS `home_organizer`.`shopping_item` (`uuid` INT, `group_uuid` INT, `name` INT, `shopping_list_uuid` INT, `state_uuid` INT, `counter` BIGINT, `quantity` INT, `category_uuid` INT, `bought` INT, `create_time` INT, `update_time` INT, `delete_time` INT, `visible` INT, `archived` INT);
 
 -- -----------------------------------------------------
 -- Placeholder table for view `home_organizer`.`temporary_item`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `home_organizer`.`temporary_item` (`id` INT, `group_id` INT, `name` INT, `shopping_list_id` INT, `quantity` INT, `category_id` INT, `bought` INT, `create_time` INT, `update_time` INT, `delete_time` INT);
+CREATE TABLE IF NOT EXISTS `home_organizer`.`temporary_item` (`uuid` INT, `group_uuid` INT, `name` INT, `shopping_list_uuid` INT, `quantity` INT, `category_uuid` INT, `bought` INT, `create_time` INT, `update_time` INT, `delete_time` INT);
 
 -- -----------------------------------------------------
 -- View `home_organizer`.`permanent_item`
@@ -274,7 +290,7 @@ CREATE TABLE IF NOT EXISTS `home_organizer`.`temporary_item` (`id` INT, `group_i
 DROP TABLE IF EXISTS `home_organizer`.`permanent_item`;
 DROP VIEW IF EXISTS `home_organizer`.`permanent_item` ;
 USE `home_organizer`;
-CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `permanent_item`  AS  select `item`.`id` AS `id`, `item`.`group_id` AS `group_id`, `item`.`name` AS `name`,`item`.`state_id` AS `state_id`,`item`.`category_id` AS `category_id`, `item`.`counter` AS `counter`, `item`.`create_time` AS `create_time`,`item`.`update_time` AS `update_time`,`item`.`delete_time` AS `delete_time` from `item` where isnull(`item`.`shopping_list_id`);
+CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `permanent_item`  AS  select `item`.`uuid` AS `uuid`, `item`.`group_uuid` AS `group_uuid`, `item`.`name` AS `name`,`item`.`state_uuid` AS `state_uuid`,`item`.`category_uuid` AS `category_uuid`, `item`.`counter` AS `counter`, `item`.`create_time` AS `create_time`,`item`.`update_time` AS `update_time`,`item`.`delete_time` AS `delete_time` from `item` where isnull(`item`.`shopping_list_uuid`);
 
 -- -----------------------------------------------------
 -- View `home_organizer`.`saldo`
@@ -282,7 +298,21 @@ CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY D
 DROP TABLE IF EXISTS `home_organizer`.`saldo`;
 DROP VIEW IF EXISTS `home_organizer`.`saldo` ;
 USE `home_organizer`;
-CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `saldo`  AS  select `expenses`.`payer_id` AS `payer_id`,`expenses`.`recipient_id` AS `recipient_id`, `expenses`.`group_id` AS `group_id`, `expenses`.`value` AS `value` from `expenses`;
+CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `saldo`  AS  
+SELECT `e1`.`group`, `e1`.`payer`, `e1`.`recipient`, (`e1`.`value` - `e2`.`value`) `value`
+FROM (
+  SELECT `e`.`group_uuid` `group`, `ed`.`payer_uuid` `payer`, `ed`.`recipient_uuid` `recipient`, SUM(`value`) `value`
+  FROM `expense_details` `ed`
+  JOIN `expenses` `e` ON `e`.`uuid` = `ed`.`expense_uuid`
+  WHERE `payer_uuid`<>`recipient_uuid`
+  GROUP BY `e`.`group_uuid`, `ed`.`payer_uuid`, `ed`.`recipient_uuid`) `e1`
+CROSS JOIN (
+  SELECT `e`.`group_uuid` `group`, `ed`.`payer_uuid` `payer`, `ed`.`recipient_uuid` `recipient`, SUM(`value`) `value`
+  FROM `expense_details` `ed`
+  JOIN `expenses` `e` ON `e`.`uuid` = `ed`.`expense_uuid`
+  WHERE `payer_uuid`<>`recipient_uuid`
+  GROUP BY `e`.`group_uuid`, `ed`.`payer_uuid`, `ed`.`recipient_uuid`) `e2`
+WHERE `e1`.`payer`<>`e2`.`payer` AND `e1`.`recipient`<>`e2`.`recipient` AND `e1`.`group`=`e2`.`group` AND (`e1`.`value` - `e2`.`value`) > 0;
 
 -- -----------------------------------------------------
 -- View `home_organizer`.`shopping_item`
@@ -290,7 +320,7 @@ CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY D
 DROP TABLE IF EXISTS `home_organizer`.`shopping_item`;
 DROP VIEW IF EXISTS `home_organizer`.`shopping_item` ;
 USE `home_organizer`;
-CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `shopping_item`  AS  select `item`.`id` AS `id`, `item`.`group_id` AS `group_id`, `item`.`name` AS `name`,`item`.`shopping_list_id` AS `shopping_list_id`,`item`.`state_id` AS `state_id`,`item`.`counter` AS `counter`, `item`.`quantity` AS `quantity`,`item`.`category_id` AS `category_id`,`item`.`bought` AS `bought`,`item`.`create_time` AS `create_time`,`item`.`update_time` AS `update_time`,`item`.`delete_time` AS `delete_time`,`sl`.`visible` AS `visible`,`sl`.`delete_time` AS `archived` from (`item` left join `shopping_list` `sl` on((`sl`.`id` = `item`.`shopping_list_id`)));
+CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `shopping_item`  AS  select `item`.`uuid` AS `uuid`, `item`.`group_uuid` AS `group_uuid`, `item`.`name` AS `name`,`item`.`shopping_list_uuid` AS `shopping_list_uuid`,`item`.`state_uuid` AS `state_uuid`,`item`.`counter` AS `counter`, `item`.`quantity` AS `quantity`,`item`.`category_uuid` AS `category_uuid`,`item`.`bought` AS `bought`,`item`.`create_time` AS `create_time`,`item`.`update_time` AS `update_time`,`item`.`delete_time` AS `delete_time`,`sl`.`visible` AS `visible`,`sl`.`delete_time` AS `archived` from (`item` left join `shopping_list` `sl` on((`sl`.`uuid` = `item`.`shopping_list_uuid`)));
 
 -- -----------------------------------------------------
 -- View `home_organizer`.`temporary_item`
@@ -298,13 +328,13 @@ CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY D
 DROP TABLE IF EXISTS `home_organizer`.`temporary_item`;
 DROP VIEW IF EXISTS `home_organizer`.`temporary_item` ;
 USE `home_organizer`;
-CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `temporary_item`  AS  select `item`.`id` AS `id`, `item`.`group_id` AS `group_id`, `item`.`name` AS `name`,`item`.`shopping_list_id` AS `shopping_list_id`,`item`.`quantity` AS `quantity`,`item`.`category_id` AS `category_id`,`item`.`bought` AS `bought`,`item`.`create_time` AS `create_time`,`item`.`update_time` AS `update_time`,`item`.`delete_time` AS `delete_time` from `item` where (`item`.`shopping_list_id` is not null);
+CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `temporary_item`  AS  select `item`.`uuid` AS `uuid`, `item`.`group_uuid` AS `group_uuid`, `item`.`name` AS `name`,`item`.`shopping_list_uuid` AS `shopping_list_uuid`,`item`.`quantity` AS `quantity`,`item`.`category_uuid` AS `category_uuid`,`item`.`bought` AS `bought`,`item`.`create_time` AS `create_time`,`item`.`update_time` AS `update_time`,`item`.`delete_time` AS `delete_time` from `item` where (`item`.`shopping_list_uuid` is not null);
 
-INSERT INTO `state` (`id`, `name`, `create_time`, `update_time`, `delete_time`) VALUES
-(1, 'CRITICAL', CURRENT_TIMESTAMP, NULL, NULL),
-(2, 'LITTLE', CURRENT_TIMESTAMP, NULL, NULL),
-(3, 'MEDIUM', CURRENT_TIMESTAMP, NULL, NULL),
-(4, 'LOT', CURRENT_TIMESTAMP, NULL, NULL);
+INSERT INTO `state` (`uuid`, `level`, `name`, `create_time`, `update_time`, `delete_time`) VALUES
+(UNHEX(REPLACE(UUID(), "-","")), 1, 'CRITICAL', CURRENT_TIMESTAMP, NULL, NULL),
+(UNHEX(REPLACE(UUID(), "-","")), 2, 'LITTLE', CURRENT_TIMESTAMP, NULL, NULL),
+(UNHEX(REPLACE(UUID(), "-","")), 3, 'MEDIUM', CURRENT_TIMESTAMP, NULL, NULL),
+(UNHEX(REPLACE(UUID(), "-","")), 4, 'LOT', CURRENT_TIMESTAMP, NULL, NULL);
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;

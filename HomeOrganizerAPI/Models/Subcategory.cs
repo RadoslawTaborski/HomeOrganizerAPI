@@ -10,9 +10,9 @@ namespace HomeOrganizerAPI.Models
             Item = new HashSet<Item>();
         }
 
-        public int GroupId { get; set; }
+        public byte[] GroupUuid { get; set; }
         public string Name { get; set; }
-        public int CategoryId { get; set; }
+        public byte[] CategoryUuid { get; set; }
 
         public virtual Category Category { get; set; }
         public virtual Group Group { get; set; }

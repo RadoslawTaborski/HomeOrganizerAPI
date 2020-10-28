@@ -4,8 +4,8 @@ namespace HomeOrganizerAPI.Helpers.DTO
 {
     public record Category : DtoModel
     {
-        [JsonConverter(typeof(IntToStringConventer))]
-        public int GroupId { get; set; }
+        [JsonConverter(typeof(GuidToStringConverter))]
+        public byte[] GroupUuid { get; set; }
         public string Name { get; set; }
     }
 }
