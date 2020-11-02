@@ -18,9 +18,21 @@ namespace HomeOrganizerAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<ResponseData<Dto>>> Get([FromQuery] DefaultParameters resourceParameters)
+        public async Task<ActionResult<ResponseData<Dto>>> Get([FromQuery] UsersResourceParameters resourceParameters)
         {
             return await BaseGet(resourceParameters);
+        }
+
+        [HttpGet("{username}/{password}")]
+        public async Task<ActionResult<Dto>> Get(string username, string password)
+        {
+            var entity = await (_repo as UsersRepository).Get(username, password);
+            if (entity == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(_mapper.ToDto(entity));
         }
     }
 }

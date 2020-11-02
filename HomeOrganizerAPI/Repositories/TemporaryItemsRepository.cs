@@ -25,7 +25,7 @@ namespace HomeOrganizerAPI.Repositories
         {
             collection = collection.Where(i => i.ShoppingListUuid != null);
             var castedParams = parameters as TemporaryItemsResourceParameters;
-            if (!isNull(castedParams.GroupUuid))
+            if (!IsNull(castedParams.GroupUuid))
             {
                 var arg = castedParams.GroupUuid.Trim();
                 collection = collection.Where(i => Guid.Parse(arg).ToByteArray() == i.GroupUuid);
@@ -35,21 +35,25 @@ namespace HomeOrganizerAPI.Repositories
                 collection = Enumerable.Empty<Item>().AsAsyncQueryable();
                 return;
             }
-            if (!isNull(castedParams.ShoppingListUuid))
+            if (!IsNull(castedParams.ShoppingListUuid))
             {
                 var arg = castedParams.ShoppingListUuid.Trim();
                 collection = collection.Where(i => Guid.Parse(arg).ToByteArray() == i.ShoppingListUuid);
             }
-            if (!isNull(castedParams.SubcategoryUuid))
+            if (!IsNull(castedParams.SubcategoryUuid))
             {
                 var arg = castedParams.SubcategoryUuid.Trim();
                 collection = collection.Where(i => Guid.Parse(arg).ToByteArray() == i.CategoryUuid);
             }
-            else if (!isNull(castedParams.CategoryUuid))
+            else if (!IsNull(castedParams.CategoryUuid))
             {
                 var arg = castedParams.CategoryUuid.Trim();
                 collection = collection.Where(i => Guid.Parse(arg).ToByteArray() == i.Category.CategoryUuid);
             }
         }
+
+        public override Task<Item> Add(Item element) => throw new NotImplementedException();
+        public override Task<bool> DeleteItem(byte[] id) => throw new NotImplementedException();
+        public override Task<Item> Update(Item element) => throw new NotImplementedException();
     }
 }

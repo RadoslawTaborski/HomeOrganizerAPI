@@ -205,30 +205,20 @@ namespace HomeOrganizerAPI.Models
 
             modelBuilder.Entity<ExpensesSettings>(entity =>
             {
-                entity.HasKey(e => new { e.User1Uuid, e.User2Uuid })
+                entity.HasKey(e => e.Uuid)
                     .HasName("PRIMARY");
 
                 entity.ToTable("expenses_settings");
 
-                entity.HasIndex(e => e.GroupUuid)
-                    .HasName("fk_expenses_settings_group1_idx");
+                entity.HasIndex(e => e.UserGroupsUuid)
+                    .HasName("fk_expenses_settings_user_groups1_idx");
 
-                entity.HasIndex(e => e.User1Uuid)
-                    .HasName("fk_expenses_settings_user1_idx");
-
-                entity.HasIndex(e => e.User2Uuid)
-                    .HasName("fk_expenses_settings_user2_idx");
-
-                entity.HasIndex(e => new { e.User1Uuid, e.User2Uuid })
-                    .HasName("user1_uuid")
+                entity.HasIndex(e => e.Uuid)
+                    .HasName("uuid")
                     .IsUnique();
 
-                entity.Property(e => e.User1Uuid)
-                    .HasColumnName("user1_uuid")
-                    .HasColumnType("binary(16)");
-
-                entity.Property(e => e.User2Uuid)
-                    .HasColumnName("user2_uuid")
+                entity.Property(e => e.Uuid)
+                    .HasColumnName("uuid")
                     .HasColumnType("binary(16)");
 
                 entity.Property(e => e.CreateTime)
@@ -239,34 +229,22 @@ namespace HomeOrganizerAPI.Models
                     .HasColumnName("delete_time")
                     .HasDefaultValueSql("'NULL'");
 
-                entity.Property(e => e.GroupUuid)
-                    .IsRequired()
-                    .HasColumnName("group_uuid")
-                    .HasColumnType("binary(16)");
-
                 entity.Property(e => e.UpdateTime)
                     .HasColumnName("update_time")
                     .HasDefaultValueSql("'NULL'");
 
+                entity.Property(e => e.UserGroupsUuid)
+                    .IsRequired()
+                    .HasColumnName("user_groups_uuid")
+                    .HasColumnType("binary(16)");
+
                 entity.Property(e => e.Value).HasColumnName("value");
 
-                entity.HasOne(d => d.Group)
+                entity.HasOne(d => d.UserGroups)
                     .WithMany(p => p.ExpensesSettings)
-                    .HasForeignKey(d => d.GroupUuid)
+                    .HasForeignKey(d => d.UserGroupsUuid)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("fk_expenses_settings_group1");
-
-                entity.HasOne(d => d.User1)
-                    .WithMany(p => p.ExpensesSettingsUser1)
-                    .HasForeignKey(d => d.User1Uuid)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("fk_expenses_settings_user1");
-
-                entity.HasOne(d => d.User2)
-                    .WithMany(p => p.ExpensesSettingsUser2)
-                    .HasForeignKey(d => d.User2Uuid)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("fk_expenses_settings_user2");
+                    .HasConstraintName("fk_expenses_settings_user_groups1");
             });
 
             modelBuilder.Entity<Group>(entity =>
@@ -460,19 +438,19 @@ namespace HomeOrganizerAPI.Models
 
                 entity.ToView("saldo");
 
-                entity.Property(e => e.Group)
+                entity.Property(e => e.GroupUuid)
                     .IsRequired()
-                    .HasColumnName("group")
+                    .HasColumnName("group_uuid")
                     .HasColumnType("binary(16)");
 
-                entity.Property(e => e.Payer)
+                entity.Property(e => e.PayerUuid)
                     .IsRequired()
-                    .HasColumnName("payer")
+                    .HasColumnName("payer_uuid")
                     .HasColumnType("binary(16)");
 
-                entity.Property(e => e.Recipient)
+                entity.Property(e => e.RecipientUuid)
                     .IsRequired()
-                    .HasColumnName("recipient")
+                    .HasColumnName("recipient_uuid")
                     .HasColumnType("binary(16)");
 
                 entity.Property(e => e.Value)
@@ -878,3 +856,4 @@ namespace HomeOrganizerAPI.Models
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
     }
 }
+

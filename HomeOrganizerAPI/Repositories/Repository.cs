@@ -36,19 +36,19 @@ namespace HomeOrganizerAPI.Repositories
             this._propertyMappingService = propertyMappingService ?? throw new ArgumentNullException(nameof(propertyMappingService));
         }
 
-        public async Task<T> Get(byte[] id)
+        public virtual async Task<T> Get(byte[] id)
         {
             return await Data.FindAsync(id);
         }
 
-        public async Task<(IEnumerable<V>, int)> Get()
+        public virtual async Task<(IEnumerable<V>, int)> Get()
         {
             IEnumerable<V> collection = await DataView.ToListAsync();
 
             return (collection, collection.Count());
         }
 
-        public async Task<(IEnumerable<T> Collection, int Lenght)> Get(Parameters parameters)
+        public virtual async Task<(IEnumerable<T> Collection, int Lenght)> Get(Parameters parameters)
         {
             if (parameters == null)
             {
@@ -59,7 +59,7 @@ namespace HomeOrganizerAPI.Repositories
 
             collection = collection.Where(i => !i.DeleteTime.HasValue);
 
-            if (!isNull(parameters.OrderBy))
+            if (!IsNull(parameters.OrderBy))
             {
                 var propertyMappingDirectory = _propertyMappingService.GetPropertyMapping<DTO, T>();
                 collection = collection.ApplySort(parameters.OrderBy, propertyMappingDirectory);
@@ -73,7 +73,7 @@ namespace HomeOrganizerAPI.Repositories
             return (enumerable.Skip(parameters.DefaultPageSize * (parameters.PageNumber - 1)).Take(parameters.DefaultPageSize), lenght);
         }
 
-        public async Task<T> Add(T element)
+        public virtual async Task<T> Add(T element)
         {
             element.CreateTime = DateTimeOffset.Now;
             element.Uuid = Guid.NewGuid().ToByteArray();
@@ -83,7 +83,7 @@ namespace HomeOrganizerAPI.Repositories
             return element;
         }
 
-        public async Task<T> Update(T element)
+        public virtual async Task<T> Update(T element)
         {
             element.UpdateTime = DateTimeOffset.Now;
             _context.Entry(element).State = EntityState.Modified;
@@ -92,7 +92,7 @@ namespace HomeOrganizerAPI.Repositories
             return element;
         }
 
-        public async Task<bool> DeleteItem(byte[] id)
+        public virtual async Task<bool> DeleteItem(byte[] id)
         {
             var entity = await Data.FindAsync(id);
             if (entity == null)
@@ -107,13 +107,13 @@ namespace HomeOrganizerAPI.Repositories
             return true;
         }
 
-        public async Task<bool> Exists(byte[] uuid)
+        public virtual async Task<bool> Exists(byte[] uuid)
         {
             var entity = await Data.FindAsync(uuid);
             return entity != null;
         }
 
-        protected bool isNull(string data)
+        protected bool IsNull(string data)
         {
             return string.IsNullOrWhiteSpace(data);
         }

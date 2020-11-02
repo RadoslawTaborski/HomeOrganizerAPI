@@ -23,7 +23,7 @@ namespace HomeOrganizerAPI.Repositories
         protected override void CustomGet(ref IQueryable<Item> collection, Parameters parameters)
         {
             ItemsResourceParameters castedParams = parameters as ItemsResourceParameters;
-            if (!isNull(castedParams.GroupUuid))
+            if (!IsNull(castedParams.GroupUuid))
             {
                 var arg = castedParams.GroupUuid.Trim();
                 collection = collection.Where(i => Guid.Parse(arg).ToByteArray() == i.GroupUuid);
@@ -33,12 +33,12 @@ namespace HomeOrganizerAPI.Repositories
                 collection = Enumerable.Empty<Item>().AsAsyncQueryable();
                 return;
             }
-            if (!isNull(castedParams.SubcategoryUuid))
+            if (!IsNull(castedParams.SubcategoryUuid))
             {
                 var arg = castedParams.SubcategoryUuid.Trim();
                 collection = collection.Where(i => Guid.Parse(arg).ToByteArray() == i.CategoryUuid);
             }
-            else if (!isNull(castedParams.CategoryUuid))
+            else if (!IsNull(castedParams.CategoryUuid))
             {
                 var arg = castedParams.CategoryUuid.Trim();
                 collection = collection.Where(i => Guid.Parse(arg).ToByteArray() == i.Category.CategoryUuid);

@@ -2,14 +2,14 @@
 
 namespace HomeOrganizerAPI.Helpers.DTO
 {
-    public record Saldo : IDtoEntity
+    public record ExpenseDetails : DtoModel
     {
         [JsonConverter(typeof(GuidToStringConverter))]
-        public byte[] GroupUuid { get; set; }
+        public byte[] ExpenseUuid { get; set; }
+        public decimal Value { get; set; }
         [JsonConverter(typeof(GuidToStringConverter))]
         public byte[] PayerUuid { get; set; }
         [JsonConverter(typeof(GuidToStringConverter))]
         public byte[] RecipientUuid { get; set; }
-        public decimal Value { get; set; }
     }
 }

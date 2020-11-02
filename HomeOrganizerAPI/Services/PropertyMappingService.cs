@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using CategoryDto = HomeOrganizerAPI.Helpers.DTO.Category;
 using ExpensesDto = HomeOrganizerAPI.Helpers.DTO.Expenses;
+using ExpenseDetailsDto = HomeOrganizerAPI.Helpers.DTO.ExpenseDetails;
+using ExpensesSettingsDto = HomeOrganizerAPI.Helpers.DTO.ExpensesSettings;
 using ItemDto = HomeOrganizerAPI.Helpers.DTO.Item;
 using PermanentItemDto = HomeOrganizerAPI.Helpers.DTO.PermanentItem;
 using SaldoDto = HomeOrganizerAPI.Helpers.DTO.Saldo;
@@ -17,6 +19,7 @@ using StateDto = HomeOrganizerAPI.Helpers.DTO.State;
 using SubcategoryDto = HomeOrganizerAPI.Helpers.DTO.Subcategory;
 using TemporaryItemDto = HomeOrganizerAPI.Helpers.DTO.TemporaryItem;
 using UserDto = HomeOrganizerAPI.Helpers.DTO.User;
+using GroupDto = HomeOrganizerAPI.Helpers.DTO.Group;
 
 namespace HomeOrganizerAPI.Services
 {
@@ -30,6 +33,8 @@ namespace HomeOrganizerAPI.Services
             _propertyMappings.Add(new PropertyMapping<ItemDto, Item>(CreatePropertyMapping<ItemDto, Item>(mapperConfiguration)));
             _propertyMappings.Add(new PropertyMapping<CategoryDto, Category>(CreatePropertyMapping<CategoryDto, Category>(mapperConfiguration)));
             _propertyMappings.Add(new PropertyMapping<ExpensesDto, Expenses>(CreatePropertyMapping<ExpensesDto, Expenses>(mapperConfiguration)));
+            _propertyMappings.Add(new PropertyMapping<ExpenseDetailsDto, ExpenseDetails>(CreatePropertyMapping<ExpenseDetailsDto, ExpenseDetails>(mapperConfiguration)));
+            _propertyMappings.Add(new PropertyMapping<ExpensesSettingsDto, ExpensesSettings>(CreatePropertyMapping<ExpensesSettingsDto, ExpensesSettings>(mapperConfiguration)));
             _propertyMappings.Add(new PropertyMapping<PermanentItemDto, Item>(CreatePropertyMapping<PermanentItemDto, Item>(mapperConfiguration)));
             _propertyMappings.Add(new PropertyMapping<SaldoDto, Saldo>(CreatePropertyMapping<SaldoDto, Saldo>(mapperConfiguration)));
             _propertyMappings.Add(new PropertyMapping<ShoppingItemDto, Item>(CreatePropertyMapping<ShoppingItemDto, Item>(mapperConfiguration)));
@@ -38,6 +43,7 @@ namespace HomeOrganizerAPI.Services
             _propertyMappings.Add(new PropertyMapping<SubcategoryDto, Subcategory>(CreatePropertyMapping<SubcategoryDto, Subcategory>(mapperConfiguration)));
             _propertyMappings.Add(new PropertyMapping<TemporaryItemDto, Item>(CreatePropertyMapping<TemporaryItemDto, Item>(mapperConfiguration)));
             _propertyMappings.Add(new PropertyMapping<UserDto, User>(CreatePropertyMapping<UserDto, User>(mapperConfiguration)));
+            _propertyMappings.Add(new PropertyMapping<GroupDto, Group>(CreatePropertyMapping<UserDto, User>(mapperConfiguration)));
         }
 
         public Dictionary<string, PropertyMappingValue> GetPropertyMapping<TSrc, TDst>()

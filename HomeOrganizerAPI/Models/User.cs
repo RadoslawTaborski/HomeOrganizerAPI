@@ -9,8 +9,6 @@ namespace HomeOrganizerAPI.Models
         {
             ExpenseDetailsPayer = new HashSet<ExpenseDetails>();
             ExpenseDetailsRecipient = new HashSet<ExpenseDetails>();
-            ExpensesSettingsUser1 = new HashSet<ExpensesSettings>();
-            ExpensesSettingsUser2 = new HashSet<ExpensesSettings>();
             UserGroups = new HashSet<UserGroups>();
         }
 
@@ -20,8 +18,6 @@ namespace HomeOrganizerAPI.Models
 
         public virtual ICollection<ExpenseDetails> ExpenseDetailsPayer { get; set; }
         public virtual ICollection<ExpenseDetails> ExpenseDetailsRecipient { get; set; }
-        public virtual ICollection<ExpensesSettings> ExpensesSettingsUser1 { get; set; }
-        public virtual ICollection<ExpensesSettings> ExpensesSettingsUser2 { get; set; }
         public virtual ICollection<UserGroups> UserGroups { get; set; }
     }
 }

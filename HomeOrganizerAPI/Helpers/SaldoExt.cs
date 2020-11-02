@@ -1,12 +1,13 @@
 ﻿using HomeOrganizerAPI.Models;
 using System;
-using System.Text.Json.Serialization;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace HomeOrganizerAPI.Helpers.DTO
+namespace HomeOrganizerAPI.Helpers
 {
-    public record DtoModel : IDtoModel
+    public record SaldoExt : Saldo, IModel
     {
-        [JsonConverter(typeof(GuidToStringConverter))]
         public byte[] Uuid { get; set; }
         public DateTimeOffset CreateTime { get; set; }
         public DateTimeOffset? UpdateTime { get; set; }

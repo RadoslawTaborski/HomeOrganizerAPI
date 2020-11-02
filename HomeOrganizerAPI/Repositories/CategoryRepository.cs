@@ -23,7 +23,7 @@ namespace HomeOrganizerAPI.Repositories
         protected override void CustomGet(ref IQueryable<Category> collection, Parameters parameters)
         {
             var castedParams = parameters as CategoryResourceParameters;
-            if (!isNull(castedParams.GroupUuid))
+            if (!IsNull(castedParams.GroupUuid))
             {
                 var arg = castedParams.GroupUuid.Trim();
                 collection = collection.Where(i => Guid.Parse(arg).ToByteArray() == i.GroupUuid);

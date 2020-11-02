@@ -17,19 +17,19 @@ namespace HomeOrganizerAPI.Controllers
         where V : Model
         where DTO : DtoModel
     {
-        private readonly Repository<T, V, DTO> _repo;
-        protected IMapper _mapper;
+        protected readonly Repository<T, V, DTO> _repo;
+        protected Mapper<T, DTO> _mapper;
 
         public BaseController(Repository<T, V, DTO> repository)
         {
             _repo = repository;
-            _mapper = AutoMapperConfig.MapperConfiguration.CreateMapper();
+            _mapper = new Mapper<T, DTO>();
         }
 
         public async Task<ActionResult<ResponseData<DTO>>> BaseGet(Parameters resourceParameters)
         {
             var (Collection, Lenght) = await _repo.Get(resourceParameters);
-            var collection = Collection.Select(i => ToDto(i)).ToArray();
+            var collection = Collection.Select(i => _mapper.ToDto(i)).ToArray();
             return Ok(ControllerHelper.GenerateResponse(collection, Lenght));
         }
 
@@ -43,15 +43,15 @@ namespace HomeOrganizerAPI.Controllers
                 return NotFound();
             }
 
-            return Ok(ToDto(entity));
+            return Ok(_mapper.ToDto(entity));
         }
 
         [HttpPost]
         public async Task<ActionResult<DTO>> BasePost([FromBody] DTO value)
         {
-            var added = await _repo.Add(FromDto(value));
+            var added = await _repo.Add(_mapper.FromDto(value));
 
-            return CreatedAtAction(nameof(BaseGet), new { uuid = new Guid(added.Uuid).ToString(), version = "v1" }, added);
+            return CreatedAtAction(nameof(BaseGet), new { uuid = new Guid(added.Uuid).ToString(), version = "v1" }, _mapper.ToDto(added));
         }
 
         [HttpPut]
@@ -59,8 +59,8 @@ namespace HomeOrganizerAPI.Controllers
         {
             try
             {
-                var added = await _repo.Update(FromDto(value));
-                return CreatedAtAction(nameof(BaseGet), new { uuid = new Guid(added.Uuid).ToString(), version = "v1" }, added);
+                var added = await _repo.Update(_mapper.FromDto(value));
+                return CreatedAtAction(nameof(BaseGet), new { uuid = new Guid(added.Uuid).ToString(), version = "v1" }, _mapper.ToDto(added));
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -85,16 +85,6 @@ namespace HomeOrganizerAPI.Controllers
                 return Ok();
             }
             return NotFound();
-        }
-
-        protected DTO ToDto(T entity)
-        {
-            return _mapper.Map<DTO>(entity);
-        }
-
-        protected T FromDto(DTO dto)
-        {
-            return _mapper.Map<T>(dto);
         }
     }
 }

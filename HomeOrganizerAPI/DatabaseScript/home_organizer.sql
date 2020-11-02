@@ -125,26 +125,20 @@ ADD CONSTRAINT `fk_expense_details_user2` FOREIGN KEY (`payer_uuid`) REFERENCES 
 DROP TABLE IF EXISTS `home_organizer`.`expenses_settings` ;
 
 CREATE TABLE IF NOT EXISTS `home_organizer`.`expenses_settings` (
-  `user1_uuid` BINARY(16) NOT NULL,
-  `user2_uuid` BINARY(16) NOT NULL,
-  `group_uuid` BINARY(16) NOT NULL,
+  `uuid` BINARY(16) NOT NULL UNIQUE,
+  `user_groups_uuid` BINARY(16) NOT NULL,
   `value` FLOAT NOT NULL,
   `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` TIMESTAMP NULL DEFAULT NULL,
   `delete_time` TIMESTAMP NULL DEFAULT NULL,
-  PRIMARY KEY (`user1_uuid`, `user2_uuid`),
-  KEY `fk_expenses_settings_user1_idx` (`user1_uuid`),
-  KEY `fk_expenses_settings_user2_idx` (`user2_uuid`),
-  KEY `fk_expenses_settings_group1_idx` (`group_uuid`),
-  UNIQUE(user1_uuid,user2_uuid)
+  PRIMARY KEY (`uuid`),
+  KEY `fk_expenses_settings_user_groups1_idx` (`user_groups_uuid`)
 ) ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8
 COLLATE = utf8_polish_ci;
 
 ALTER TABLE `home_organizer`.`expenses_settings`
-ADD CONSTRAINT `fk_expenses_settings_group1` FOREIGN KEY (`group_uuid`) REFERENCES `home_organizer`.`group` (`uuid`),
-ADD CONSTRAINT `fk_expenses_settings_user1` FOREIGN KEY (`user1_uuid`) REFERENCES `home_organizer`.`user` (`uuid`),
-ADD CONSTRAINT `fk_expenses_settings_user2` FOREIGN KEY (`user2_uuid`) REFERENCES `home_organizer`.`user` (`uuid`);
+ADD CONSTRAINT `fk_expenses_settings_user_groups1` FOREIGN KEY (`user_groups_uuid`) REFERENCES `home_organizer`.`user_groups` (`uuid`);
 
 -- -----------------------------------------------------
 -- Table `home_organizer`.`shopping_list`
@@ -299,7 +293,7 @@ DROP TABLE IF EXISTS `home_organizer`.`saldo`;
 DROP VIEW IF EXISTS `home_organizer`.`saldo` ;
 USE `home_organizer`;
 CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `saldo`  AS  
-SELECT `e1`.`group`, `e1`.`payer`, `e1`.`recipient`, (`e1`.`value` - `e2`.`value`) `value`
+SELECT `e1`.`group` AS group_uuid, `e1`.`payer` AS payer_uuid, `e1`.`recipient` AS recipient_uuid, (`e1`.`value` - `e2`.`value`) `value`
 FROM (
   SELECT `e`.`group_uuid` `group`, `ed`.`payer_uuid` `payer`, `ed`.`recipient_uuid` `recipient`, SUM(`value`) `value`
   FROM `expense_details` `ed`
