@@ -266,6 +266,11 @@ CREATE TABLE IF NOT EXISTS `home_organizer`.`permanent_item` (`uuid` INT, `group
 -- -----------------------------------------------------
 -- Placeholder table for view `home_organizer`.`saldo`
 -- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `home_organizer`.`saldo_part` (`group_uuid` INT, `payer_uuid` INT, `recipient_uuid` INT, `value` INT);
+
+-- -----------------------------------------------------
+-- Placeholder table for view `home_organizer`.`saldo`
+-- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `home_organizer`.`saldo` (`payer_uuid` INT, `group_uuid` INT, `recipient_uuid` INT, `value` INT);
 
 -- -----------------------------------------------------
@@ -287,6 +292,19 @@ USE `home_organizer`;
 CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `permanent_item`  AS  select `item`.`uuid` AS `uuid`, `item`.`group_uuid` AS `group_uuid`, `item`.`name` AS `name`,`item`.`state_uuid` AS `state_uuid`,`item`.`category_uuid` AS `category_uuid`, `item`.`counter` AS `counter`, `item`.`create_time` AS `create_time`,`item`.`update_time` AS `update_time`,`item`.`delete_time` AS `delete_time` from `item` where isnull(`item`.`shopping_list_uuid`);
 
 -- -----------------------------------------------------
+-- View `home_organizer`.`saldo_part`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `home_organizer`.`saldo_part`;
+DROP VIEW IF EXISTS `home_organizer`.`saldo_part` ;
+USE `home_organizer`;
+CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `saldo_part`  AS  
+  SELECT `e`.`group_uuid` `group`, `ed`.`payer_uuid` `payer`, `ed`.`recipient_uuid` `recipient`, SUM(`value`) `value`
+  FROM `expense_details` `ed`
+  JOIN `expenses` `e` ON `e`.`uuid` = `ed`.`expense_uuid`
+  WHERE `payer_uuid`<>`recipient_uuid`
+  GROUP BY `e`.`group_uuid`, `ed`.`payer_uuid`, `ed`.`recipient_uuid`;
+
+-- -----------------------------------------------------
 -- View `home_organizer`.`saldo`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `home_organizer`.`saldo`;
@@ -294,18 +312,8 @@ DROP VIEW IF EXISTS `home_organizer`.`saldo` ;
 USE `home_organizer`;
 CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `saldo`  AS  
 SELECT `e1`.`group` AS group_uuid, `e1`.`payer` AS payer_uuid, `e1`.`recipient` AS recipient_uuid, (`e1`.`value` - `e2`.`value`) `value`
-FROM (
-  SELECT `e`.`group_uuid` `group`, `ed`.`payer_uuid` `payer`, `ed`.`recipient_uuid` `recipient`, SUM(`value`) `value`
-  FROM `expense_details` `ed`
-  JOIN `expenses` `e` ON `e`.`uuid` = `ed`.`expense_uuid`
-  WHERE `payer_uuid`<>`recipient_uuid`
-  GROUP BY `e`.`group_uuid`, `ed`.`payer_uuid`, `ed`.`recipient_uuid`) `e1`
-CROSS JOIN (
-  SELECT `e`.`group_uuid` `group`, `ed`.`payer_uuid` `payer`, `ed`.`recipient_uuid` `recipient`, SUM(`value`) `value`
-  FROM `expense_details` `ed`
-  JOIN `expenses` `e` ON `e`.`uuid` = `ed`.`expense_uuid`
-  WHERE `payer_uuid`<>`recipient_uuid`
-  GROUP BY `e`.`group_uuid`, `ed`.`payer_uuid`, `ed`.`recipient_uuid`) `e2`
+FROM saldo_part `e1`
+CROSS JOIN saldo_part `e2`
 WHERE `e1`.`payer`<>`e2`.`payer` AND `e1`.`recipient`<>`e2`.`recipient` AND `e1`.`group`=`e2`.`group` AND (`e1`.`value` - `e2`.`value`) > 0;
 
 -- -----------------------------------------------------
@@ -323,12 +331,6 @@ DROP TABLE IF EXISTS `home_organizer`.`temporary_item`;
 DROP VIEW IF EXISTS `home_organizer`.`temporary_item` ;
 USE `home_organizer`;
 CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `temporary_item`  AS  select `item`.`uuid` AS `uuid`, `item`.`group_uuid` AS `group_uuid`, `item`.`name` AS `name`,`item`.`shopping_list_uuid` AS `shopping_list_uuid`,`item`.`quantity` AS `quantity`,`item`.`category_uuid` AS `category_uuid`,`item`.`bought` AS `bought`,`item`.`create_time` AS `create_time`,`item`.`update_time` AS `update_time`,`item`.`delete_time` AS `delete_time` from `item` where (`item`.`shopping_list_uuid` is not null);
-
-INSERT INTO `state` (`uuid`, `level`, `name`, `create_time`, `update_time`, `delete_time`) VALUES
-(UNHEX(REPLACE(UUID(), "-","")), 1, 'CRITICAL', CURRENT_TIMESTAMP, NULL, NULL),
-(UNHEX(REPLACE(UUID(), "-","")), 2, 'LITTLE', CURRENT_TIMESTAMP, NULL, NULL),
-(UNHEX(REPLACE(UUID(), "-","")), 3, 'MEDIUM', CURRENT_TIMESTAMP, NULL, NULL),
-(UNHEX(REPLACE(UUID(), "-","")), 4, 'LOT', CURRENT_TIMESTAMP, NULL, NULL);
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;

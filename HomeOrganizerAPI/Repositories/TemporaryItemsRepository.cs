@@ -39,6 +39,10 @@ namespace HomeOrganizerAPI.Repositories
             {
                 var arg = castedParams.ShoppingListUuid.Trim();
                 collection = collection.Where(i => Guid.Parse(arg).ToByteArray() == i.ShoppingListUuid);
+            } else
+            {
+                collection = Enumerable.Empty<Item>().AsAsyncQueryable();
+                return;
             }
             if (!IsNull(castedParams.SubcategoryUuid))
             {
@@ -51,9 +55,5 @@ namespace HomeOrganizerAPI.Repositories
                 collection = collection.Where(i => Guid.Parse(arg).ToByteArray() == i.Category.CategoryUuid);
             }
         }
-
-        public override Task<Item> Add(Item element) => throw new NotImplementedException();
-        public override Task<bool> DeleteItem(byte[] id) => throw new NotImplementedException();
-        public override Task<Item> Update(Item element) => throw new NotImplementedException();
     }
 }

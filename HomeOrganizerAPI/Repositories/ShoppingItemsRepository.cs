@@ -76,9 +76,5 @@ namespace HomeOrganizerAPI.Repositories
                 }
             }
         }
-
-        public override Task<Item> Add(Item element) => throw new NotImplementedException();
-        public override Task<bool> DeleteItem(byte[] id) => throw new NotImplementedException();
-        public override Task<Item> Update(Item element) => throw new NotImplementedException();
     }
 }
