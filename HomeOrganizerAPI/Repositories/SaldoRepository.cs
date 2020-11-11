@@ -55,10 +55,20 @@ namespace HomeOrganizerAPI.Repositories
 
             CustomGet(ref collection, parameters);
 
-            var lenght = await collection.CountAsync();
+            var enumerable = await NotQuerableGet(collection);
+            var lenght = enumerable.Count();
 
-            return (collection.Skip(parameters.DefaultPageSize * (parameters.PageNumber - 1)).Take(parameters.DefaultPageSize), lenght);
+            return (enumerable.Skip(parameters.DefaultPageSize * (parameters.PageNumber - 1)).Take(parameters.DefaultPageSize), lenght);
         }
+
+        private async Task<IEnumerable<Saldo>> NotQuerableGet(IQueryable<Saldo> collection)
+        {
+            return await collection
+                .Include(c => c.P).ThenInclude(c => c.Payer)
+                .Include(c => c.ExpenseDetails).ThenInclude(c => c.Recipient).ThenInclude(c => c.UserGroups).ThenInclude(c => c.ExpensesSettings)
+                .ToListAsync();
+        }
+
         private bool IsNull(string data)
         {
             return string.IsNullOrWhiteSpace(data);

@@ -14,6 +14,7 @@ using SubcategoryDto = HomeOrganizerAPI.Helpers.DTO.Subcategory;
 using TemporaryItemDto = HomeOrganizerAPI.Helpers.DTO.TemporaryItem;
 using UserDto = HomeOrganizerAPI.Helpers.DTO.User;
 using GroupDto = HomeOrganizerAPI.Helpers.DTO.Group;
+using UserGroupsDto = HomeOrganizerAPI.Helpers.DTO.UserGroups;
 
 namespace HomeOrganizerAPI.Helpers
 {
@@ -41,7 +42,8 @@ namespace HomeOrganizerAPI.Helpers
                 cfg.CreateMap<ExpensesSettings, ExpensesSettingsDto>()
                 .ForMember(dest => dest.GroupUuid, opts => opts.MapFrom(src => src.UserGroups.GroupUuid))
                 .ForMember(dest => dest.UserUuid, opts => opts.MapFrom(src => src.UserGroups.UserUuid))
-                .ReverseMap();      
+                .ReverseMap();
+                cfg.CreateMap<UserGroups, UserGroupsDto>().ReverseMap();
             });
         }
     }

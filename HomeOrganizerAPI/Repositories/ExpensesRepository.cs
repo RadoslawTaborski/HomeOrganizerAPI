@@ -4,8 +4,9 @@ using HomeOrganizerAPI.ResourceParameters;
 using HomeOrganizerAPI.Services;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
-
+using System.Threading.Tasks;
 using Dto = HomeOrganizerAPI.Helpers.DTO.Expenses;
 
 namespace HomeOrganizerAPI.Repositories
@@ -34,6 +35,14 @@ namespace HomeOrganizerAPI.Repositories
                 return;
             }
             collection = collection.Where(i => i.ExpenseDetails.Sum(p => p.Value) != 0);
+        }
+
+        protected override async Task<IEnumerable<Expenses>> NotQuerableGet(IQueryable<Expenses> collection)
+        {
+            return await collection
+                .Include(c => c.ExpenseDetails).ThenInclude(c => c.Payer)
+                .Include(c => c.ExpenseDetails).ThenInclude(c => c.Recipient).ThenInclude(c => c.UserGroups).ThenInclude(c => c.ExpensesSettings)
+                .ToListAsync();
         }
     }
 }

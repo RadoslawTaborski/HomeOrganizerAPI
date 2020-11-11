@@ -1,11 +1,13 @@
-﻿using HomeOrganizerAPI.Helpers;
+﻿using AutoMapper.Internal;
+using HomeOrganizerAPI.Helpers;
 using HomeOrganizerAPI.Models;
 using HomeOrganizerAPI.ResourceParameters;
 using HomeOrganizerAPI.Services;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
-
+using System.Threading.Tasks;
 using Dto = HomeOrganizerAPI.Helpers.DTO.ExpenseDetails;
 
 namespace HomeOrganizerAPI.Repositories
@@ -38,6 +40,11 @@ namespace HomeOrganizerAPI.Repositories
                 var arg = castedParams.ExpenseUuid.Trim();
                 collection = collection.Where(i => Guid.Parse(arg).ToByteArray() == i.ExpenseUuid);
             }
+        }
+
+        protected override async Task<IEnumerable<ExpenseDetails>> NotQuerableGet(IQueryable<ExpenseDetails> collection)
+        {
+            return await collection.Include(c => c.Payer).Include(c => c.Recipient).Include(c => c.Recipient.UserGroups).ThenInclude(c => c.ExpensesSettings).ToListAsync();
         }
     }
 }

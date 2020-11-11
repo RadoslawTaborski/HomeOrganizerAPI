@@ -7,9 +7,7 @@ namespace HomeOrganizerAPI.Helpers.DTO
         [JsonConverter(typeof(GuidToStringConverter))]
         public byte[] ExpenseUuid { get; set; }
         public decimal Value { get; set; }
-        [JsonConverter(typeof(GuidToStringConverter))]
-        public byte[] PayerUuid { get; set; }
-        [JsonConverter(typeof(GuidToStringConverter))]
-        public byte[] RecipientUuid { get; set; }
+        public User Payer { get; set; }
+        public User Recipient { get; set; }
     }
 }
