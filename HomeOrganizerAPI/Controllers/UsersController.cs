@@ -11,7 +11,7 @@ namespace HomeOrganizerAPI.Controllers
     [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
-    public class UsersController : BaseController<User, User, Dto>
+    public class UsersController : BaseController<User, User, Dto, Dto>
     {
         public UsersController(HomeOrganizerContext context, IPropertyMappingService propertyMappingService) : base(new UsersRepository(context, propertyMappingService))
         {
@@ -32,7 +32,7 @@ namespace HomeOrganizerAPI.Controllers
                 return NotFound();
             }
 
-            return Ok(_mapper.ToDto(entity));
+            return Ok(_mapperTOut.ToDto(entity));
         }
     }
 }

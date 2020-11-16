@@ -63,10 +63,7 @@ namespace HomeOrganizerAPI.Repositories
 
         private async Task<IEnumerable<Saldo>> NotQuerableGet(IQueryable<Saldo> collection)
         {
-            return await collection
-                .Include(c => c.P).ThenInclude(c => c.Payer)
-                .Include(c => c.ExpenseDetails).ThenInclude(c => c.Recipient).ThenInclude(c => c.UserGroups).ThenInclude(c => c.ExpensesSettings)
-                .ToListAsync();
+            return await collection.ToListAsync();
         }
 
         private bool IsNull(string data)

@@ -11,10 +11,10 @@ using System.Threading.Tasks;
 
 namespace HomeOrganizerAPI.Repositories
 {
-    public abstract class Repository<T, V, DTO> : IDisposable
+    public abstract class Repository<T, V, OUT> : IDisposable
         where T : Model
         where V : Model
-        where DTO : DtoModel
+        where OUT : DtoModel
     {
         protected readonly HomeOrganizerContext _context;
         protected readonly IPropertyMappingService _propertyMappingService;
@@ -61,7 +61,7 @@ namespace HomeOrganizerAPI.Repositories
 
             if (!IsNull(parameters.OrderBy))
             {
-                var propertyMappingDirectory = _propertyMappingService.GetPropertyMapping<DTO, T>();
+                var propertyMappingDirectory = _propertyMappingService.GetPropertyMapping<OUT, T>();
                 collection = collection.ApplySort(parameters.OrderBy, propertyMappingDirectory);
             }
 
@@ -75,12 +75,17 @@ namespace HomeOrganizerAPI.Repositories
 
         public virtual async Task<T> Add(T element)
         {
-            element.CreateTime = DateTimeOffset.Now;
-            element.Uuid = Guid.NewGuid().ToByteArray();
+            BeforeCreate(element);
             Data.Add(element);
             await _context.SaveChangesAsync();
 
             return element;
+        }
+
+        protected virtual void BeforeCreate(T element)
+        {
+            element.CreateTime = DateTimeOffset.Now;
+            element.Uuid = Guid.NewGuid().ToByteArray();
         }
 
         public virtual async Task<T> Update(T element)

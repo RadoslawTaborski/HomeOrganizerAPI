@@ -14,7 +14,7 @@ namespace HomeOrganizerAPI.Controllers
     [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
-    public class GroupController : BaseController<Group, Group, Dto>
+    public class GroupController : BaseController<Group, Group, Dto, Dto>
     {
         public GroupController(HomeOrganizerContext context, IPropertyMappingService propertyMappingService) : base(new GroupRepository(context, propertyMappingService))
         {

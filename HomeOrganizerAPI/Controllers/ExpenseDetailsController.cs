@@ -12,7 +12,7 @@ namespace HomeOrganizerAPI.Controllers
     [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
-    public class ExpenseDetailsController : BaseController<ExpenseDetails, ExpenseDetails, Dto>
+    public class ExpenseDetailsController : BaseController<ExpenseDetails, ExpenseDetails, Dto, Dto>
     {
         public ExpenseDetailsController(HomeOrganizerContext context, IPropertyMappingService propertyMappingService) : base(new ExpenseDetailsRepository(context, propertyMappingService))
         {

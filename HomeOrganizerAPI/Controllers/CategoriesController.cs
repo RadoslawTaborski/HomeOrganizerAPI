@@ -11,7 +11,7 @@ namespace HomeOrganizerAPI.Controllers
     [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
-    public class CategoriesController : BaseController<Category, Category, Dto>
+    public class CategoriesController : BaseController<Category, Category, Dto, Dto>
     {
         public CategoriesController(HomeOrganizerContext context, IPropertyMappingService propertyMappingService) : base(new CategoryRepository(context, propertyMappingService))
         {

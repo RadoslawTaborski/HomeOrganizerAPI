@@ -12,29 +12,32 @@ using System.Threading.Tasks;
 
 namespace HomeOrganizerAPI.Controllers
 {
-    public abstract class BaseController<T, V, DTO> : Controller
+    public abstract class BaseController<T, V, OUT, IN> : Controller
         where T : Model
         where V : Model
-        where DTO : DtoModel
+        where OUT : DtoModel
+        where IN : class, IDtoEntity
     {
-        protected readonly Repository<T, V, DTO> _repo;
-        protected Mapper<T, DTO> _mapper;
+        protected readonly Repository<T, V, OUT> _repo;
+        protected Mapper<T, OUT> _mapperTOut;
+        protected MapperOutIn<OUT, IN> _mapperOutIn;
 
-        public BaseController(Repository<T, V, DTO> repository)
+        public BaseController(Repository<T, V, OUT> repository)
         {
             _repo = repository;
-            _mapper = new Mapper<T, DTO>();
+            _mapperTOut = new Mapper<T, OUT>();
+            _mapperOutIn = new MapperOutIn<OUT, IN>();
         }
 
-        public async Task<ActionResult<ResponseData<DTO>>> BaseGet(Parameters resourceParameters)
+        public async Task<ActionResult<ResponseData<OUT>>> BaseGet(Parameters resourceParameters)
         {
             var (Collection, Lenght) = await _repo.Get(resourceParameters);
-            var collection = Collection.Select(i => _mapper.ToDto(i)).ToArray();
+            var collection = Collection.Select(i => _mapperTOut.ToDto(i)).ToArray();
             return Ok(ControllerHelper.GenerateResponse(collection, Lenght));
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<DTO>> BaseGet(string id)
+        public async Task<ActionResult<OUT>> BaseGet(string id)
         {
             var byteUuid = Guid.Parse(id).ToByteArray();
             var entity = await _repo.Get(byteUuid);
@@ -43,24 +46,30 @@ namespace HomeOrganizerAPI.Controllers
                 return NotFound();
             }
 
-            return Ok(_mapper.ToDto(entity));
+            return Ok(_mapperTOut.ToDto(entity));
         }
 
         [HttpPost]
-        public async Task<ActionResult<DTO>> BasePost([FromBody] DTO value)
+        public async Task<ActionResult<T>> BasePost([FromBody] IN value)
         {
-            var added = await _repo.Add(_mapper.FromDto(value));
+            OUT outModel = await MapInToOut(value);
+            var added = await _repo.Add(_mapperTOut.FromDto(outModel));
 
-            return CreatedAtAction(nameof(BaseGet), new { uuid = new Guid(added.Uuid).ToString(), version = "v1" }, _mapper.ToDto(added));
+            return CreatedAtAction(nameof(BaseGet), new { uuid = new Guid(added.Uuid).ToString(), version = "v1" }, _mapperTOut.ToDto(added));
+        }
+
+        protected async virtual Task<OUT> MapInToOut(IN value)
+        {
+            return _mapperOutIn.Transform(value);
         }
 
         [HttpPut]
-        public async Task<ActionResult<DTO>> BasePut([FromBody] DTO value)
+        public async Task<ActionResult<OUT>> BasePut([FromBody] OUT value)
         {
             try
             {
-                var added = await _repo.Update(_mapper.FromDto(value));
-                return CreatedAtAction(nameof(BaseGet), new { uuid = new Guid(added.Uuid).ToString(), version = "v1" }, _mapper.ToDto(added));
+                var added = await _repo.Update(_mapperTOut.FromDto(value));
+                return CreatedAtAction(nameof(BaseGet), new { uuid = new Guid(added.Uuid).ToString(), version = "v1" }, _mapperTOut.ToDto(added));
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -76,7 +85,7 @@ namespace HomeOrganizerAPI.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<DTO>> BaseDelete(string id)
+        public async Task<ActionResult<OUT>> BaseDelete(string id)
         {
             var byteUuid = Guid.Parse(id).ToByteArray();
             var deleted = await _repo.DeleteItem(byteUuid);

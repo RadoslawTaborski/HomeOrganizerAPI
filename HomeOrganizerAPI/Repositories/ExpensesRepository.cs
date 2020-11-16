@@ -44,5 +44,21 @@ namespace HomeOrganizerAPI.Repositories
                 .Include(c => c.ExpenseDetails).ThenInclude(c => c.Recipient).ThenInclude(c => c.UserGroups).ThenInclude(c => c.ExpensesSettings)
                 .ToListAsync();
         }
+
+        protected override void BeforeCreate(Expenses element)
+        {
+            SetValues(element);
+
+            foreach (var detail in element.ExpenseDetails)
+            {
+                SetValues(detail);
+            }
+        }
+
+        private static void SetValues(Model element)
+        {
+            element.CreateTime = DateTime.Now;
+            element.Uuid = Guid.NewGuid().ToByteArray();
+        }
     }
 }

@@ -12,7 +12,7 @@ namespace HomeOrganizerAPI.Controllers
     [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
-    public class ItemsController : BaseController<Item, Item, Dto>
+    public class ItemsController : BaseController<Item, Item, Dto, Dto>
     {
         public ItemsController(HomeOrganizerContext context, IPropertyMappingService propertyMappingService) : base(new ItemRepository(context, propertyMappingService: propertyMappingService))
         {

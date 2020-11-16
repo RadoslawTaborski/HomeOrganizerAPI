@@ -11,7 +11,7 @@ namespace HomeOrganizerAPI.Controllers
     [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
-    public class TemporaryItemsController : BaseController<Item, TemporaryItem, Dto>
+    public class TemporaryItemsController : BaseController<Item, TemporaryItem, Dto, Dto>
     {
         public TemporaryItemsController(HomeOrganizerContext context, IPropertyMappingService propertyMappingService) : base(new TemporaryItemsRepository(context, propertyMappingService))
         {
