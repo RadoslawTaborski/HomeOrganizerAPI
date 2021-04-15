@@ -28,10 +28,10 @@ namespace HomeOrganizerAPI
             {
                 options.AddPolicy(
                   "CorsPolicy",
-                  builder => builder.WithOrigins("http://localhost:4200", "http://webapp.zapto.org:5090")
+                  builder => builder.WithOrigins("http://localhost", "http://webapp.zapto.org")
+                  .AllowAnyOrigin()
                   .AllowAnyMethod()
-                  .AllowAnyHeader()
-                  .AllowCredentials());
+                  .AllowAnyHeader());
             });
             services.AddTransient<IPropertyMappingService, PropertyMappingService>();
             services.AddDbContext<HomeOrganizerContext>(options => options.UseMySQL(Configuration.GetConnectionString("Database")));
@@ -46,13 +46,11 @@ namespace HomeOrganizerAPI
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHttpsRedirection();
-
             app.UseRouting();
 
-            app.UseAuthorization();
-
             app.UseCors("CorsPolicy");
+
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

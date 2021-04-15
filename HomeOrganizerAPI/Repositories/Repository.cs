@@ -76,6 +76,7 @@ namespace HomeOrganizerAPI.Repositories
         public virtual async Task<T> Add(T element)
         {
             element.CreateTime = DateTimeOffset.Now;
+            element.UpdateTime = element.CreateTime;
             element.Uuid = Guid.NewGuid().ToByteArray();
             Data.Add(element);
             await _context.SaveChangesAsync();
