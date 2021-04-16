@@ -22,11 +22,19 @@ namespace HomeOrganizerAPI.Repositories
 
         protected override void CustomGet(ref IQueryable<ShoppingList> collection, Parameters parameters)
         {
-            var castedParams = parameters as DefaultParameters;
+            var castedParams = parameters as ShoppingListResourceParameters;
             if (!IsNull(castedParams.GroupUuid))
             {
                 var arg = castedParams.GroupUuid.Trim();
                 collection = collection.Where(i => Guid.Parse(arg).ToByteArray() == i.GroupUuid);
+                if (!IsNull(castedParams.Name))
+                {
+                    var arg2 = castedParams.Name.Trim();
+                    collection = collection.Where(i => i.Name == arg2);
+                } else
+                {
+                    collection = collection.Where(i => !i.Name.Contains("GROUP_"));
+                }
             }
             else
             {

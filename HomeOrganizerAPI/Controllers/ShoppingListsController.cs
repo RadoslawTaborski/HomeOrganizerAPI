@@ -18,7 +18,7 @@ namespace HomeOrganizerAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<ResponseData<Dto>>> Get([FromQuery] DefaultParameters resourceParameters)
+        public async Task<ActionResult<ResponseData<Dto>>> Get([FromQuery] ShoppingListResourceParameters resourceParameters)
         {
             return await BaseGet(resourceParameters);
         }
