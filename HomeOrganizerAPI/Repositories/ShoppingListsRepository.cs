@@ -31,9 +31,6 @@ namespace HomeOrganizerAPI.Repositories
                 {
                     var arg2 = castedParams.Name.Trim();
                     collection = collection.Where(i => i.Name == arg2);
-                } else
-                {
-                    collection = collection.Where(i => !i.Name.Contains("GROUP_"));
                 }
             }
             else
