@@ -763,6 +763,12 @@ namespace HomeOrganizerAPI.Models
                     .HasColumnName("uuid")
                     .HasColumnType("binary(16)");
 
+                entity.Property(e => e.ExternalUuid)
+                    .HasColumnName("external_uuid")
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("'NULL'");
+
                 entity.Property(e => e.CreateTime)
                     .HasColumnName("create_time")
                     .HasDefaultValueSql("'current_timestamp()'");
@@ -770,18 +776,6 @@ namespace HomeOrganizerAPI.Models
                 entity.Property(e => e.DeleteTime)
                     .HasColumnName("delete_time")
                     .HasDefaultValueSql("'NULL'");
-
-                entity.Property(e => e.Email)
-                    .HasColumnName("email")
-                    .HasMaxLength(255)
-                    .IsUnicode(false)
-                    .HasDefaultValueSql("'NULL'");
-
-                entity.Property(e => e.Password)
-                    .IsRequired()
-                    .HasColumnName("password")
-                    .HasMaxLength(32)
-                    .IsUnicode(false);
 
                 entity.Property(e => e.UpdateTime)
                     .HasColumnName("update_time")

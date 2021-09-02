@@ -35,9 +35,9 @@ namespace HomeOrganizerAPI.Repositories
             }
         }
 
-        public async Task<User> Get(string username, string password)
+        public async Task<User> Get(string externalUuid)
         {
-            return await Data.SingleOrDefaultAsync(user => user.Username == username && user.Password == password);
+            return await Data.SingleOrDefaultAsync(user => user.ExternalUuid == externalUuid);
         }
     }
 }

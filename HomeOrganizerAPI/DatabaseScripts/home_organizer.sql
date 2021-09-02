@@ -62,12 +62,11 @@ DROP TABLE IF EXISTS `home_organizer`.`user` ;
 CREATE TABLE IF NOT EXISTS `home_organizer`.`user` (
   `uuid` BINARY(16) NOT NULL UNIQUE,
   `username` VARCHAR(16) NOT NULL,
-  `email` VARCHAR(255) NULL DEFAULT NULL,
-  `password` VARCHAR(32) NOT NULL,
+  `external_uuid` BINARY(16) NOT NULL UNIQUE,
   `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` TIMESTAMP NULL DEFAULT NULL,
   `delete_time` TIMESTAMP NULL DEFAULT NULL,
-  PRIMARY KEY (`uuid`)
+  PRIMARY KEY (`uuid`),
 ) ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8
 COLLATE = utf8_polish_ci;

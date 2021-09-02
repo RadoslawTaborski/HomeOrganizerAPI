@@ -25,10 +25,10 @@ namespace HomeOrganizerAPI.Controllers
             return await BaseGet(resourceParameters);
         }
 
-        [HttpGet("{username}/{password}")]
-        public async Task<ActionResult<Dto>> Get(string username, string password)
+        [HttpGet("{id}")]
+        public override async Task<ActionResult<Dto>> BaseGet(string id)
         {
-            var entity = await (_repo as UsersRepository).Get(username, password);
+            var entity = await (_repo as UsersRepository).Get(id);
             if (entity == null)
             {
                 return NotFound();

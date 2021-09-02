@@ -34,10 +34,15 @@ namespace HomeOrganizerAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<DTO>> BaseGet(string id)
+        public virtual async Task<ActionResult<DTO>> BaseGet(string id)
         {
             var byteUuid = Guid.Parse(id).ToByteArray();
             var entity = await _repo.Get(byteUuid);
+            if(entity is HomeOrganizerAPI.Models.User){
+                HomeOrganizerAPI.Models.User user = (entity as HomeOrganizerAPI.Models.User);
+                Console.WriteLine(user.Username);
+                Console.WriteLine(user.ExternalUuid);
+            }
             if (entity == null)
             {
                 return NotFound();
