@@ -3,6 +3,7 @@ using HomeOrganizerAPI.Models;
 using HomeOrganizerAPI.Repositories;
 using HomeOrganizerAPI.ResourceParameters;
 using HomeOrganizerAPI.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,7 @@ using Dto = HomeOrganizerAPI.Helpers.DTO.ExpensesSettings;
 namespace HomeOrganizerAPI.Controllers
 {
     [ApiVersion("1.0")]
+    [Authorize(Policy = "ApiReader")]
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     public class ExpensesSettingsController : BaseController<ExpensesSettings, ExpensesSettings, Dto>
