@@ -83,3 +83,12 @@ CREATE DEFINER=`rado`@`localhost` PROCEDURE `add_user_to_group` (IN `userUuid` B
 END$$
 
 DELIMITER ;
+
+DROP TABLE IF EXISTS `home_organizer`.`saldo`;
+DROP VIEW IF EXISTS `home_organizer`.`saldo` ;
+USE `home_organizer`;
+CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `saldo`  AS  
+SELECT `e1`.`group` AS group_uuid, `e1`.`payer` AS payer_uuid, `e1`.`recipient` AS recipient_uuid, (`e1`.`value` - `e2`.`value`) `value`
+FROM saldo_part `e1`
+CROSS JOIN saldo_part `e2`
+WHERE `e1`.`payer`=`e2`.`recipient` AND `e1`.`recipient`=`e2`.`payer` AND `e1`.`group`=`e2`.`group` AND (`e1`.`value` - `e2`.`value`) > 0;
