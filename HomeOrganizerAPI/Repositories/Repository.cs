@@ -38,12 +38,12 @@ namespace HomeOrganizerAPI.Repositories
 
         public virtual async Task<T> Get(byte[] id)
         {
-            return await Data.FindAsync(id);
+            return await Extend(Data).FirstOrDefaultAsync(i => i.Uuid == id);
         }
 
         public virtual async Task<(IEnumerable<V>, int)> Get()
         {
-            IEnumerable<V> collection = await DataView.ToListAsync();
+            IEnumerable<V> collection = await ExtendView(DataView).ToListAsync();
 
             return (collection, collection.Count());
         }
@@ -55,7 +55,7 @@ namespace HomeOrganizerAPI.Repositories
                 throw new ArgumentNullException(nameof(parameters));
             }
 
-            var collection = Data as IQueryable<T>;
+            var collection = Extend(Data);
 
             collection = collection.Where(i => !i.DeleteTime.HasValue);
 
@@ -71,6 +71,14 @@ namespace HomeOrganizerAPI.Repositories
             var lenght = enumerable.Count();
 
             return (enumerable.Skip(parameters.DefaultPageSize * (parameters.PageNumber - 1)).Take(parameters.DefaultPageSize), lenght);
+        }
+
+        protected virtual IQueryable<T> Extend(DbSet<T> set){
+            return set;
+        }
+
+        protected virtual IQueryable<V> ExtendView(DbSet<V> set){
+            return set;
         }
 
         public virtual async Task<T> Add(T element)
@@ -93,14 +101,8 @@ namespace HomeOrganizerAPI.Repositories
             return element;
         }
 
-        public virtual async Task<bool> DeleteItem(byte[] id)
+        public virtual async Task<bool> DeleteItem(T entity)
         {
-            var entity = await Data.FindAsync(id);
-            if (entity == null)
-            {
-                throw new InvalidOperationException("entity not found");
-            }
-
             entity.UpdateTime = DateTimeOffset.Now;
             entity.DeleteTime = DateTimeOffset.Now;
 

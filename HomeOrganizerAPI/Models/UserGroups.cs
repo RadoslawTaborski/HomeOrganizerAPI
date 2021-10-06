@@ -12,6 +12,7 @@ namespace HomeOrganizerAPI.Models
 
         public byte[] UserUuid { get; set; }
         public byte[] GroupUuid { get; set; }
+        public bool Owner { get; set; }
 
         public virtual Group Group { get; set; }
         public virtual User User { get; set; }

@@ -9,6 +9,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Security.Claims;
+using HomeOrganizerAPI.Repositories;
+using System;
 
 namespace HomeOrganizerAPI
 {
@@ -43,6 +45,7 @@ namespace HomeOrganizerAPI
             {
                 options.AddPolicy("ApiReader", policy => policy.RequireClaim("scope", "ho.read"));
                 options.AddPolicy("Consumer", policy => policy.RequireClaim(ClaimTypes.Role, "consumer"));
+                options.AddPolicy("Admin", policy => policy.RequireClaim(ClaimTypes.Role, "admin"));
             });
             services.AddCors(options =>
             {
@@ -55,6 +58,21 @@ namespace HomeOrganizerAPI
             });
             services.AddTransient<IPropertyMappingService, PropertyMappingService>();
             services.AddDbContext<HomeOrganizerContext>(options => options.UseMySQL(Configuration.GetConnectionString("Database")));
+            services.AddTransient<CategoryRepository>();
+            services.AddTransient<ExpensesSettingsRepository>();
+            services.AddTransient<ExpensesRepository>();
+            services.AddTransient<ExpenseDetailsRepository>();
+            services.AddTransient<GroupRepository>();
+            services.AddTransient<ItemRepository>();
+            services.AddTransient<PermanentItemsRepository>();
+            services.AddTransient<SaldoRepository>();
+            services.AddTransient<ShoppingItemsRepository>();
+            services.AddTransient<ShoppingListsRepository>();
+            services.AddTransient<StatesRepository>();
+            services.AddTransient<SubcategoryRepository>();
+            services.AddTransient<TemporaryItemsRepository>();
+            services.AddTransient<UsersRepository>();
+            services.AddTransient<IPermissionChecker, PermissionChecker>();
             services.AddControllers();
         }
 

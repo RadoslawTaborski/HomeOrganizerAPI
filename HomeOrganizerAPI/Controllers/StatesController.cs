@@ -1,9 +1,12 @@
-﻿using HomeOrganizerAPI.Models;
+﻿using HomeOrganizerAPI.Helpers;
+using HomeOrganizerAPI.Models;
 using HomeOrganizerAPI.Repositories;
 using HomeOrganizerAPI.ResourceParameters;
 using HomeOrganizerAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Dto = HomeOrganizerAPI.Helpers.DTO.State;
 
@@ -13,16 +16,22 @@ namespace HomeOrganizerAPI.Controllers
     [Authorize(Policy = "ApiReader")]
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
-    public class StatesController : BaseController<State, State, Dto>
+    public class StatesController : BaseController<State, State, Dto, DefaultParameters>
     {
-        public StatesController(HomeOrganizerContext context, IPropertyMappingService propertyMappingService) : base(new StatesRepository(context, propertyMappingService))
+        private IPermissionChecker _checker;
+        public StatesController(StatesRepository repo, IPermissionChecker checker) : base(repo)
         {
+            _checker = checker;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<ResponseData<Dto>>> Get([FromQuery] DefaultParameters resourceParameters)
+        protected override async Task<bool> HasAccessGet(ClaimsPrincipal user, DefaultParameters resourceParameters)
         {
-            return await BaseGet(resourceParameters);
+            return await Task.FromResult(true);
+        }
+        
+        protected override async Task<bool> HasAccessGet(ClaimsPrincipal user, State entity)
+        {
+            return await Task.FromResult(true);
         }
     }
 }
