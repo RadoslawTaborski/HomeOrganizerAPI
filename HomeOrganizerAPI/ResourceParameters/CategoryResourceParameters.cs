@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace HomeOrganizerAPI.ResourceParameters
 {
-    public class CategoryResourceParameters : Parameters
+    public class ListCategoryResourceParameters : Parameters
     {
         public override int MaxPageSize { get; set; } = 50;
         public override int PageSize { get; set; } = 50;

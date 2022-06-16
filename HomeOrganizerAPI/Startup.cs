@@ -67,6 +67,7 @@ namespace HomeOrganizerAPI
             services.AddTransient<PermanentItemsRepository>();
             services.AddTransient<SaldoRepository>();
             services.AddTransient<ShoppingItemsRepository>();
+            services.AddTransient<ListCategoryRepository>();
             services.AddTransient<ShoppingListsRepository>();
             services.AddTransient<StatesRepository>();
             services.AddTransient<SubcategoryRepository>();

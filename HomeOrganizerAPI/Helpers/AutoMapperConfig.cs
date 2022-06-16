@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using HomeOrganizerAPI.Models;
 using CategoryDto = HomeOrganizerAPI.Helpers.DTO.Category;
+using ListCategoryDto = HomeOrganizerAPI.Helpers.DTO.ListCategory;
 using ExpensesDto = HomeOrganizerAPI.Helpers.DTO.Expenses;
 using ExpenseDetailsDto = HomeOrganizerAPI.Helpers.DTO.ExpenseDetails;
 using ExpensesSettingsDto = HomeOrganizerAPI.Helpers.DTO.ExpensesSettings;
@@ -26,6 +27,7 @@ namespace HomeOrganizerAPI.Helpers
             MapperConfiguration = new MapperConfiguration(cfg =>
             {
                 cfg.CreateMap<Category, CategoryDto>().ReverseMap();
+                cfg.CreateMap<ListCategory, ListCategoryDto>().ReverseMap();
                 cfg.CreateMap<Item, ShoppingItemDto>().ReverseMap();
                 cfg.CreateMap<User, UserDto>().ReverseMap();
                 cfg.CreateMap<Group, GroupDto>().ReverseMap();

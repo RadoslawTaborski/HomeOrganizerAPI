@@ -32,6 +32,11 @@ namespace HomeOrganizerAPI.Repositories
                     var arg2 = castedParams.Name.Trim();
                     collection = collection.Where(i => i.Name == arg2);
                 }
+                if (!IsNull(castedParams.CategoryUuid))
+                {
+                    var arg3 = castedParams.CategoryUuid.Trim();
+                    collection = collection.Where(i => Guid.Parse(arg3).ToByteArray() == i.CategoryUuid);
+                }
             }
             else
             {

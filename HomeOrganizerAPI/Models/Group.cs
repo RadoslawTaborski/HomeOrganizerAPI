@@ -8,6 +8,7 @@ namespace HomeOrganizerAPI.Models
         public Group()
         {
             Category = new HashSet<Category>();
+            ListCategory = new HashSet<ListCategory>();
             Expenses = new HashSet<Expenses>();
             Item = new HashSet<Item>();
             ShoppingList = new HashSet<ShoppingList>();
@@ -18,6 +19,7 @@ namespace HomeOrganizerAPI.Models
         public string Name { get; set; }
 
         public virtual ICollection<Category> Category { get; set; }
+        public virtual ICollection<ListCategory> ListCategory { get; set; }
         public virtual ICollection<Expenses> Expenses { get; set; }
         public virtual ICollection<Item> Item { get; set; }
         public virtual ICollection<ShoppingList> ShoppingList { get; set; }

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CategoryDto = HomeOrganizerAPI.Helpers.DTO.Category;
+using ListCategoryDto = HomeOrganizerAPI.Helpers.DTO.ListCategory;
 using ExpensesDto = HomeOrganizerAPI.Helpers.DTO.Expenses;
 using ExpenseDetailsDto = HomeOrganizerAPI.Helpers.DTO.ExpenseDetails;
 using ExpensesSettingsDto = HomeOrganizerAPI.Helpers.DTO.ExpensesSettings;
@@ -32,6 +33,7 @@ namespace HomeOrganizerAPI.Services
             MapperConfiguration mapperConfiguration = AutoMapperConfig.MapperConfiguration;
             _propertyMappings.Add(new PropertyMapping<ItemDto, Item>(CreatePropertyMapping<ItemDto, Item>(mapperConfiguration)));
             _propertyMappings.Add(new PropertyMapping<CategoryDto, Category>(CreatePropertyMapping<CategoryDto, Category>(mapperConfiguration)));
+            _propertyMappings.Add(new PropertyMapping<ListCategoryDto, ListCategory>(CreatePropertyMapping<ListCategoryDto, ListCategory>(mapperConfiguration)));
             _propertyMappings.Add(new PropertyMapping<ExpensesDto, Expenses>(CreatePropertyMapping<ExpensesDto, Expenses>(mapperConfiguration)));
             _propertyMappings.Add(new PropertyMapping<ExpenseDetailsDto, ExpenseDetails>(CreatePropertyMapping<ExpenseDetailsDto, ExpenseDetails>(mapperConfiguration)));
             _propertyMappings.Add(new PropertyMapping<ExpensesSettingsDto, ExpensesSettings>(CreatePropertyMapping<ExpensesSettingsDto, ExpensesSettings>(mapperConfiguration)));

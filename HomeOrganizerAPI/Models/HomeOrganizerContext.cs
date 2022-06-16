@@ -16,6 +16,7 @@ namespace HomeOrganizerAPI.Models
         }
 
         public virtual DbSet<Category> Category { get; set; }
+        public virtual DbSet<ListCategory> ListCategory { get; set; }
         public virtual DbSet<ExpenseDetails> ExpenseDetails { get; set; }
         public virtual DbSet<Expenses> Expenses { get; set; }
         public virtual DbSet<ExpensesSettings> ExpensesSettings { get; set; }
@@ -76,6 +77,54 @@ namespace HomeOrganizerAPI.Models
 
                 entity.HasOne(d => d.Group)
                     .WithMany(p => p.Category)
+                    .HasForeignKey(d => d.GroupUuid)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("fk_category_group1");
+            });
+
+            modelBuilder.Entity<ListCategory>(entity =>
+            {
+                entity.HasKey(e => e.Uuid)
+                    .HasName("PRIMARY");
+
+                entity.ToTable("list_category");
+
+                entity.HasIndex(e => e.GroupUuid)
+                    .HasName("fk_list_category_group1_idx");
+
+                entity.HasIndex(e => e.Uuid)
+                    .HasName("uuid")
+                    .IsUnique();
+
+                entity.Property(e => e.Uuid)
+                    .HasColumnName("uuid")
+                    .HasColumnType("binary(16)");
+
+                entity.Property(e => e.CreateTime)
+                    .HasColumnName("create_time")
+                    .HasDefaultValueSql("'current_timestamp()'");
+
+                entity.Property(e => e.DeleteTime)
+                    .HasColumnName("delete_time")
+                    .HasDefaultValueSql("'NULL'");
+
+                entity.Property(e => e.GroupUuid)
+                    .IsRequired()
+                    .HasColumnName("group_uuid")
+                    .HasColumnType("binary(16)");
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasColumnName("name")
+                    .HasMaxLength(60)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.UpdateTime)
+                    .HasColumnName("update_time")
+                    .HasDefaultValueSql("'NULL'");
+
+                entity.HasOne(d => d.Group)
+                    .WithMany(p => p.ListCategory)
                     .HasForeignKey(d => d.GroupUuid)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("fk_category_group1");
@@ -541,6 +590,9 @@ namespace HomeOrganizerAPI.Models
                 entity.HasIndex(e => e.GroupUuid)
                     .HasName("fk_shopping_list_group1_idx");
 
+                entity.HasIndex(e => e.GroupUuid)
+                    .HasName("fk_shopping_list_category1");
+
                 entity.HasIndex(e => e.Uuid)
                     .HasName("uuid")
                     .IsUnique();
@@ -568,6 +620,11 @@ namespace HomeOrganizerAPI.Models
                     .HasColumnName("group_uuid")
                     .HasColumnType("binary(16)");
 
+                entity.Property(e => e.CategoryUuid)
+                    .IsRequired()
+                    .HasColumnName("category_uuid")
+                    .HasColumnType("binary(16)");
+
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasColumnName("name")
@@ -587,6 +644,12 @@ namespace HomeOrganizerAPI.Models
                     .HasForeignKey(d => d.GroupUuid)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("fk_shopping_list_group1");
+
+                entity.HasOne(d => d.Category)
+                    .WithMany(p => p.ShoppingList)
+                    .HasForeignKey(d => d.CategoryUuid)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("fk_shopping_list_category1");
             });
 
             modelBuilder.Entity<State>(entity =>
