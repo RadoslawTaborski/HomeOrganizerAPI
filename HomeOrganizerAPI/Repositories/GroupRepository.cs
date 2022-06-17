@@ -37,7 +37,7 @@ namespace HomeOrganizerAPI.Repositories
 
         protected override IQueryable<Group> Extend(DbSet<Group> Data)
         {
-            return Data.Include(x => x.UserGroups);
+            return Data.Include(x => x.UserGroups).ThenInclude(y => y.User);
         }
     }
 }
