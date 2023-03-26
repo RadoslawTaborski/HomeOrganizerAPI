@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace HomeOrganizerAPI.Services
+namespace HomeOrganizerAPI.Services;
+
+public interface IPropertyMappingService
 {
-    public interface IPropertyMappingService
-    {
-        Dictionary<string, PropertyMappingValue> GetPropertyMapping<TSrc, TDst>();
-    }
+    Dictionary<string, PropertyMappingValue> GetPropertyMapping<TSrc, TDst>();
 }

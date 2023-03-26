@@ -1,25 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
-namespace HomeOrganizerAPI.Helpers
+namespace HomeOrganizerAPI.Helpers;
+
+public class NullableIntToStringConventer : JsonConverter<int?>
 {
-    public class NullableIntToStringConventer : JsonConverter<int?>
+    public override int? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        public override int? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-        {
-            var str = reader.GetString();
-            var success = int.TryParse(str, out int value);
-            return success ? value : null;
-        }
+        var str = reader.GetString();
+        var success = int.TryParse(str, out int value);
+        return success ? value : null;
+    }
 
-        public override void Write(Utf8JsonWriter writer, int? value, JsonSerializerOptions options)
-        {
-            writer.WriteStringValue(value?.ToString());
-        }
+    public override void Write(Utf8JsonWriter writer, int? value, JsonSerializerOptions options)
+    {
+        writer.WriteStringValue(value?.ToString());
     }
 }

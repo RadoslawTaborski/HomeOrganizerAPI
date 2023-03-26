@@ -9,59 +9,58 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dto = HomeOrganizerAPI.Helpers.DTO.Saldo;
 
-namespace HomeOrganizerAPI.Repositories
+namespace HomeOrganizerAPI.Repositories;
+
+public class SaldoRepository
 {
-    public class SaldoRepository
+    private readonly HomeOrganizerContext _context;
+    private readonly IPropertyMappingService _propertyMappingService;
+    private DbSet<Saldo> Data => _context.Saldo;
+
+    public SaldoRepository(HomeOrganizerContext context, IPropertyMappingService propertyMappingService)
     {
-        private readonly HomeOrganizerContext _context;
-        private readonly IPropertyMappingService _propertyMappingService;
-        private DbSet<Saldo> Data => _context.Saldo;
+        this._context = context ?? throw new ArgumentNullException(nameof(context));
+        this._propertyMappingService = propertyMappingService ?? throw new ArgumentNullException(nameof(propertyMappingService));
+    }
 
-        public SaldoRepository(HomeOrganizerContext context, IPropertyMappingService propertyMappingService)
+    private void CustomGet(ref IQueryable<Saldo> collection, Parameters parameters)
+    {
+        var castedParams = parameters as SaldoResourceParameters;
+        if (!IsNull(castedParams.GroupUuid))
         {
-            this._context = context ?? throw new ArgumentNullException(nameof(context));
-            this._propertyMappingService = propertyMappingService ?? throw new ArgumentNullException(nameof(propertyMappingService));
+            var arg = castedParams.GroupUuid.Trim();
+            collection = collection.Where(i => Guid.Parse(arg).ToByteArray() == i.GroupUuid);
+        }
+        else
+        {
+            collection = Enumerable.Empty<Saldo>().AsAsyncQueryable();
+            return;
+        }
+    }
+
+    public async Task<(IEnumerable<Saldo> Collection, int Lenght)> Get(Parameters parameters)
+    {
+        if (parameters == null)
+        {
+            throw new ArgumentNullException(nameof(parameters));
         }
 
-        private void CustomGet(ref IQueryable<Saldo> collection, Parameters parameters)
+        var collection = Data as IQueryable<Saldo>;
+
+        if (!IsNull(parameters.OrderBy))
         {
-            var castedParams = parameters as SaldoResourceParameters;
-            if (!IsNull(castedParams.GroupUuid))
-            {
-                var arg = castedParams.GroupUuid.Trim();
-                collection = collection.Where(i => Guid.Parse(arg).ToByteArray() == i.GroupUuid);
-            }
-            else
-            {
-                collection = Enumerable.Empty<Saldo>().AsAsyncQueryable();
-                return;
-            }
+            var propertyMappingDirectory = _propertyMappingService.GetPropertyMapping<Dto, Saldo>();
+            collection = collection.ApplySort(parameters.OrderBy, propertyMappingDirectory);
         }
 
-        public async Task<(IEnumerable<Saldo> Collection, int Lenght)> Get(Parameters parameters)
-        {
-            if (parameters == null)
-            {
-                throw new ArgumentNullException(nameof(parameters));
-            }
+        CustomGet(ref collection, parameters);
 
-            var collection = Data as IQueryable<Saldo>;
+        var lenght = await collection.CountAsync();
 
-            if (!IsNull(parameters.OrderBy))
-            {
-                var propertyMappingDirectory = _propertyMappingService.GetPropertyMapping<Dto, Saldo>();
-                collection = collection.ApplySort(parameters.OrderBy, propertyMappingDirectory);
-            }
-
-            CustomGet(ref collection, parameters);
-
-            var lenght = await collection.CountAsync();
-
-            return (collection.Skip(parameters.DefaultPageSize * (parameters.PageNumber - 1)).Take(parameters.DefaultPageSize), lenght);
-        }
-        private bool IsNull(string data)
-        {
-            return string.IsNullOrWhiteSpace(data);
-        }
+        return (collection.Skip(parameters.DefaultPageSize * (parameters.PageNumber - 1)).Take(parameters.DefaultPageSize), lenght);
+    }
+    private bool IsNull(string data)
+    {
+        return string.IsNullOrWhiteSpace(data);
     }
 }

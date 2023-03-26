@@ -1,16 +1,15 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace HomeOrganizerAPI.Helpers.DTO
+namespace HomeOrganizerAPI.Helpers.DTO;
+
+public record PermanentItem : DtoModel
 {
-    public record PermanentItem : DtoModel
-    {
-        [JsonConverter(typeof(GuidToStringConverter))]
-        public byte[] GroupUuid { get; set; }
-        public string Name { get; set; }
-        [JsonConverter(typeof(GuidToStringConverter))]
-        public byte[] StateUuid { get; set; }
-        [JsonConverter(typeof(GuidToStringConverter))]
-        public byte[] CategoryUuid { get; set; }
-        public long Counter { get; set; }
-    }
+    [JsonConverter(typeof(GuidToStringConverter))]
+    public byte[] GroupUuid { get; set; }
+    public string Name { get; set; }
+    [JsonConverter(typeof(GuidToStringConverter))]
+    public byte[] StateUuid { get; set; }
+    [JsonConverter(typeof(GuidToStringConverter))]
+    public byte[] CategoryUuid { get; set; }
+    public long Counter { get; set; }
 }

@@ -1,6 +1,5 @@
-﻿namespace HomeOrganizerAPI.Helpers.DTO
+﻿namespace HomeOrganizerAPI.Helpers.DTO;
+
+public interface IDtoEntity
 {
-    public interface IDtoEntity
-    {
-    }
 }

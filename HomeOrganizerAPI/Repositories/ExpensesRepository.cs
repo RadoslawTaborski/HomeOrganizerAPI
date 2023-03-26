@@ -8,32 +8,31 @@ using System.Linq;
 
 using Dto = HomeOrganizerAPI.Helpers.DTO.Expenses;
 
-namespace HomeOrganizerAPI.Repositories
+namespace HomeOrganizerAPI.Repositories;
+
+public class ExpensesRepository : Repository<Expenses, Expenses, Dto>
 {
-    public class ExpensesRepository : Repository<Expenses, Expenses, Dto>
+    public ExpensesRepository(HomeOrganizerContext context, IPropertyMappingService propertyMappingService) : base(context, propertyMappingService)
     {
-        public ExpensesRepository(HomeOrganizerContext context, IPropertyMappingService propertyMappingService) : base(context, propertyMappingService)
+    }
+
+    protected override DbSet<Expenses> Data => _context.Expenses;
+
+    protected override DbSet<Expenses> DataView => _context.Expenses;
+
+    protected override void CustomGet(ref IQueryable<Expenses> collection, Parameters parameters)
+    {
+        var castedParams = parameters as DefaultParameters;
+        if (!IsNull(castedParams.GroupUuid))
         {
+            var arg = castedParams.GroupUuid.Trim();
+            collection = collection.Where(i => Guid.Parse(arg).ToByteArray() == i.GroupUuid);
         }
-
-        protected override DbSet<Expenses> Data => _context.Expenses;
-
-        protected override DbSet<Expenses> DataView => _context.Expenses;
-
-        protected override void CustomGet(ref IQueryable<Expenses> collection, Parameters parameters)
+        else
         {
-            var castedParams = parameters as DefaultParameters;
-            if (!IsNull(castedParams.GroupUuid))
-            {
-                var arg = castedParams.GroupUuid.Trim();
-                collection = collection.Where(i => Guid.Parse(arg).ToByteArray() == i.GroupUuid);
-            }
-            else
-            {
-                collection = Enumerable.Empty<Expenses>().AsAsyncQueryable();
-                return;
-            }
-            collection = collection.Where(i => i.ExpenseDetails.Sum(p => p.Value) != 0);
+            collection = Enumerable.Empty<Expenses>().AsAsyncQueryable();
+            return;
         }
+        collection = collection.Where(i => i.ExpenseDetails.Sum(p => p.Value) != 0);
     }
 }

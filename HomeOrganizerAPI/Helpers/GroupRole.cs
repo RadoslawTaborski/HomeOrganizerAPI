@@ -1,9 +1,8 @@
-namespace HomeOrganizerAPI.Helpers
-{
-        public enum GroupRole
-        {
-            None,
-            Member,
-            Owner
-        }
-}
+namespace HomeOrganizerAPI.Helpers;
+
+    public enum GroupRole
+    {
+        None,
+        Member,
+        Owner
+    }

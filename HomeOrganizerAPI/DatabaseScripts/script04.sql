@@ -35,14 +35,18 @@ CREATE DEFINER=`rado`@`%` PROCEDURE `add_group` (IN `userUuid` BINARY(16), IN `n
 	(groupUuid, name, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), NULL);
     
     SET @userGroupUuid = UNHEX(REPLACE(UUID(), '-', ''));
-    INSERT INTO `user_groups` (`uuid`, `user_uuid`, `group_uuid`, `create_time`, `update_time`, `delete_time`) VALUES
-	(@userGroupUuid, userUuid, groupUuid, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), NULL);
+    INSERT INTO `user_groups` (`uuid`, `user_uuid`, `group_uuid`, `owner`, `create_time`, `update_time`, `delete_time`) VALUES
+	(@userGroupUuid, userUuid, groupUuid, 1, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), NULL);
     
     INSERT INTO `expenses_settings` (`uuid`, `user_groups_uuid`, `value`, `create_time`, `update_time`, `delete_time`) VALUES
 	(UNHEX(REPLACE(UUID(), '-', '')), @userGroupUuid, 1, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), NULL);
     
-    INSERT INTO `shopping_list` (`uuid`, `group_uuid`, `name`, `description`, `visible`, `create_time`, `update_time`, `delete_time`) VALUES
-	(UNHEX(REPLACE(UUID(), '-', '')), groupUuid, 'GROUP_ONE_TIME', 'GROUP_ONE_TIME', 1, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), NULL);
+    SET @listCategoryUuid = UNHEX(REPLACE(UUID(), '-', ''));
+    INSERT INTO `list_category` (`uuid`, `group_uuid`, `name`, `create_time`, `update_time`, `delete_time`) VALUES
+	(@listCategoryUuid, groupUuid, 'none', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), NULL);
+
+    INSERT INTO `shopping_list` (`uuid`, `group_uuid`, `name`, `description`, `category_uuid`, `visible`, `create_time`, `update_time`, `delete_time`) VALUES
+	(UNHEX(REPLACE(UUID(), '-', '')), groupUuid, 'GROUP_ONE_TIME', 'GROUP_ONE_TIME', @listCategoryUuid, 1, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), NULL);
     
     SET @categoryUuid = UNHEX(REPLACE(UUID(), '-', ''));
     INSERT INTO `category` (`uuid`, `group_uuid`, `name`, `create_time`, `update_time`, `delete_time`) VALUES
@@ -50,9 +54,6 @@ CREATE DEFINER=`rado`@`%` PROCEDURE `add_group` (IN `userUuid` BINARY(16), IN `n
     
     INSERT INTO `subcategory` (`uuid`, `group_uuid`, `name`, `category_uuid`, `create_time`, `update_time`, `delete_time`) VALUES
 	(UNHEX(REPLACE(UUID(), '-', '')), groupUuid, 'none', @categoryUuid, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), NULL);
-
-    INSERT INTO `list_category` (`uuid`, `group_uuid`, `name`, `create_time`, `update_time`, `delete_time`) VALUES
-	(UNHEX(REPLACE(UUID(), '-', '')), groupUuid, 'none', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), NULL);
     
     INSERT INTO `expenses` (`uuid`, `group_uuid`, `name`, `create_time`, `update_time`, `delete_time`) VALUES
     (UNHEX(REPLACE(UUID(), '-', '')), groupUuid, 'init', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), NULL);

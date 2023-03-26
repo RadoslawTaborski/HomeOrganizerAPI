@@ -1,7 +1,6 @@
-namespace HomeOrganizerAPI
+namespace HomeOrganizerAPI;
+
+public class Config
 {
-    public class Config
-    {
-        public string Authority { get; set; }
-    }
+    public string Authority { get; set; }
 }
