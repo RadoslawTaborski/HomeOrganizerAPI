@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using AutoMapper.Internal;
 using HomeOrganizerAPI.Helpers;
 using HomeOrganizerAPI.Models;
 using System;
@@ -19,6 +20,7 @@ using SubcategoryDto = HomeOrganizerAPI.Helpers.DTO.Subcategory;
 using TemporaryItemDto = HomeOrganizerAPI.Helpers.DTO.TemporaryItem;
 using UserDto = HomeOrganizerAPI.Helpers.DTO.User;
 using GroupDto = HomeOrganizerAPI.Helpers.DTO.Group;
+using System.Numerics;
 
 namespace HomeOrganizerAPI.Services;
 
@@ -74,7 +76,7 @@ public class PropertyMappingService : IPropertyMappingService
 
     private static IEnumerable<string> GetDestinationPropertyFor<TSrc, TDst>(MapperConfiguration mapper, string sourceProperty)
     {
-        var map = mapper.FindTypeMapFor<TSrc, TDst>();
+        var map = mapper.Internal().FindTypeMapFor<TSrc, TDst>();
 
         if (map == null)
         {
