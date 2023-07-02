@@ -50,11 +50,11 @@ public class Startup
         services.AddCors(options =>
         {
             options.AddPolicy(
-              "CorsPolicy",
-              builder => builder.WithOrigins("http://localhost", "http://webapp.zapto.org")
-              .AllowAnyOrigin()
-              .AllowAnyMethod()
-              .AllowAnyHeader());
+                "CorsPolicy",
+                builder => builder.WithOrigins(config.Origins)
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader());
         });
         services.AddTransient<IPropertyMappingService, PropertyMappingService>();
         services.AddDbContext<HomeOrganizerContext>(options =>
